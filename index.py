@@ -4,7 +4,7 @@ from dash.dependencies import Input, Output
 
 from app import app
 from app import server
-from layouts import layout_fn, layout_inversiones, layout_activos, layout_extranjeros, layout_afp
+from layouts import layout_fn, layout_inversiones, layout_activos, layout_extranjeros, layout_afp, layout_home
 import callbacks
 
 app.layout = html.Div([
@@ -16,7 +16,7 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/':
-        return 'HOME'
+        return layout_home
     elif pathname == '/apps/forwards-nacionales':
         return layout_fn
     elif pathname == '/apps/inversiones':

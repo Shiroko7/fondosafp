@@ -59,6 +59,18 @@ header = html.Div(
             ],id='header',className='row',
         )
 
+layout_home = html.Div([
+    header,
+    html.Ul(
+        [
+            html.Li([dcc.Link('Forwards Nacionales', href='/apps/forwards-nacionales'),]),
+            html.Li([dcc.Link('Inversiones', href='/apps/inversiones'),]),
+            html.Li([dcc.Link('Activos de Pensiones', href='/apps/activos'),]),
+            html.Li([dcc.Link('Valores Fondos', href='/apps/valores'),]),
+            html.Li([dcc.Link('Inversión en Regiones', href='/apps/extranjeros'),]),
+        ]
+    ),  
+])
 
 layout_fn = html.Div([
     header,
