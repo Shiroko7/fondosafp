@@ -7,7 +7,7 @@ from api import dif_forward_nacional
 
 # graficos
 
-def fig_forwards_nacional(df):
+def fig_forwards_nacional(df, df_vf, df_q):
     dfc = df[df['Nombre'] == 'Compra']
     dfv = df[df['Nombre'] == 'Venta']
     dif = dif_forward_nacional(df)
@@ -24,7 +24,8 @@ def fig_forwards_nacional(df):
             hover.append('▼ DOWN: ' + str(round(i,2)))
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=dif['Fecha'], y=dif['TOTAL'],name ='Total Vendido',marker_color='RoyalBlue'))
+    #forwards 
+    fig.add_trace(go.Scatter(x=dif['Fecha'], y=dif['TOTAL'], yaxis="y", name ='Total Vendido', marker_color='RoyalBlue'))
 
     fig.add_trace(go.Bar(
         name = 'Dif fix',
@@ -34,11 +35,66 @@ def fig_forwards_nacional(df):
         hovertext=hover
     ))
 
-    fig.add_trace(go.Scatter(x=dfc['Fecha'],y=dfc['TOTAL'].abs(),name='Compra',marker_color='red'))
-    fig.add_trace(go.Scatter(x=dfv['Fecha'],y=dfv['TOTAL'],name='Venta',marker_color='green'))
+    fig.add_trace(go.Scatter(x=dfc['Fecha'],y=dfc['TOTAL'].abs(), yaxis="y", name='Compra', marker_color='red',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=dfv['Fecha'],y=dfv['TOTAL'], yaxis="y", name='Venta', marker_color='green',visible="legendonly"))
 
-    fig.update_layout(yaxis={'title':'Total Vendido'},
-                      title= 'Venta neta FWD USDCLP AFP')
+    #fondos
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_A'],yaxis="y2", name ='Patrimonio Fondo A',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_B'],yaxis="y2", name ='Patrimonio Fondo B',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_C'],yaxis="y2", name ='Patrimonio Fondo C',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_D'],yaxis="y2", name ='Patrimonio Fondo D',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_E'],yaxis="y2", name ='Patrimonio Fondo E',visible="legendonly"))
+
+
+    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_A'], yaxis="y3", name ='Q Index Fondo A',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_B'], yaxis="y3", name ='Q Index Fondo B',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_C'], yaxis="y3", name ='Q Index Fondo C',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_D'], yaxis="y3", name ='Q Index Fondo D',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_E'], yaxis="y3", name ='Q Index Fondo E',visible="legendonly"))
+
+    # Create axis objects
+    fig.update_layout(
+        xaxis=dict(
+            domain=[0, 0.8]
+        ),
+        yaxis=dict(
+            title="Forwards",
+            titlefont=dict(
+                color="RoyalBlue"
+            ),
+            tickfont=dict(
+                color="RoyalBlue"
+            )
+        ),
+        yaxis2=dict(
+            title="AFP U Index",
+            titlefont=dict(
+                color="#101414"
+            ),
+            tickfont=dict(
+                color="#101414"
+            ),
+            anchor="x",
+            overlaying="y",
+            side="right"
+        ),
+        yaxis3=dict(
+            title="AFP Fondos",
+            titlefont=dict(
+                color="#323838"
+            ),
+            tickfont=dict(
+                color="#323838"
+            ),
+            anchor="free",
+            overlaying="y",
+            side="right",
+            position=0.9
+        )
+    )
+
+    fig.update_layout(title= 'Venta neta FWD USDCLP AFP')
+    
     return fig
 
 def fig_inversiones(df_input,label,tipo):
