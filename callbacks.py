@@ -120,3 +120,32 @@ def update_output_ex_rf(value):
     fig = plots.fig_inversiones(df_inter,'RENTA FIJA',flag)
     return fig
     
+@app.callback(
+    Output('fig_bar-inver', 'figure'),
+    [Input('dropdown_bar-inver', 'value'),]
+)
+def update_bar_inver(value):
+
+    fig = plots.bar_inversion(df_nacio,df_inter,value)
+
+    return fig
+
+@app.callback(
+    Output('fig_bar-nacio', 'figure'),
+    [Input('dropdown_bar-nacio', 'value'),]
+)
+def update_bar_nacio(value):
+
+    fig = plots.bar_inversion_nacional(df_nacio,value)
+
+    return fig
+
+@app.callback(
+    Output('fig_bar-inter', 'figure'),
+    [Input('dropdown_bar-inter', 'value'),]
+)
+def update_bar_inter(value):
+
+    fig = plots.bar_inversion_internacional(df_inter,value)
+
+    return fig

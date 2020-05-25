@@ -16,6 +16,7 @@ df_extranjeros = query_by_daterange("extranjeros",start_date,end_date)
 df_vf = query_by_daterange("valor_fondos",start_date,end_date)
 df_q = query_by_daterange("q_index",start_date,end_date)
 
+
 #layout forwards nacionales
 figure_fn = plots.fig_forwards_nacional(df_fn,df_vf,df_q)
 
@@ -24,6 +25,9 @@ bar_inter = plots.bar_inversion_internacional(df_inter,'TOTAL')
 bar_inver = plots.bar_inversion(df_nacio,df_inter,'TOTAL')
 
 fig_inv_total = plots.fig_inversiones(df_total,'TOTAL ACTIVOS','MMUSD')
+
+fig_inter_hedge = plots.fig_hedge(df_total,df_fn)
+
 
 #layout inversiones afp nacionales
 fig_inv_na = plots.fig_inversiones(df_nacio,'INVERSIÓN NACIONAL TOTAL','MMUSD')
@@ -55,7 +59,7 @@ header = html.Div(
                 html.Div(
                     [
                         html.H2('AFP Data',),
-                        html.H6('Versión Beta 1.2.1',className='no-print'),
+                        html.H6('Versión Beta 1.4.1',className='no-print'),
                     ],className='nine columns',style = {'text-align': 'center', 'margin-right': '16.6%'}
                 )
             ],className='nine columns',
@@ -66,7 +70,7 @@ links = html.Div(
     [
         html.Ul(
             [
-                html.Li([dcc.Link('Forwards Nacionales', href='/apps/forwards-nacionales'),]),
+                html.Li([dcc.Link('Datos Principales', href='/apps/datos-principales'),]),
                 html.Li([dcc.Link('Inversión Nacional', href='/apps/inversion-nacional'),]),
                 html.Li([dcc.Link('Inversión Internacional', href='/apps/inversion-internacional'),]),
                 html.Li([dcc.Link('Activos de Pensiones', href='/apps/activos'),]),
@@ -82,7 +86,7 @@ layout_home = html.Div([
     header,
 ],className="row")
 
-layout_fn = html.Div([
+layout_datos = html.Div([
     layout_home,
     html.H3('Forwards Nacionales'),
     html.Div(
@@ -91,30 +95,75 @@ layout_fn = html.Div([
         ], className='pretty_container'
     ),
 
-    html.H3('Inversiones'),   
     html.Div(
         [
-            dcc.Loading(id = "loading-icon_bar-inver", children=[dcc.Graph(id='fig_bar-inver',figure = bar_inver)],type="circle"),    
+            dcc.Loading(id = "loading-icon_fig-inter_hedge", children=[dcc.Graph(id='fig-inter_hedge',figure = fig_inter_hedge)],type="circle"),
         ], className='pretty_container'
     ),
-    html.Div(
-        [
-            dcc.Loading(id = "loading-icon_bar-nacio", children=[dcc.Graph(id='fig_bar-nacio',figure = bar_nacio)],type="circle"),
-        ], className='pretty_container'
-    ),
-    html.Div(
-        [
-            dcc.Loading(id = "loading-icon_bar-inter", children=[dcc.Graph(id='fig_bar-inter',figure = bar_inter)],type="circle"),  
-        ], className='pretty_container'
-    ),
-            
-    html.H3('Inversión Total'),
+
+    html.H3('Inversiones'),
+
     html.Div(
         [
             dcc.Loading(id = "loading-icon_fig-inv_total", children=[dcc.Graph(id='fig-inv_total',figure = fig_inv_total)],type="circle"),  
         ], className='pretty_container'
     ),
-
+    
+    html.Div(
+        [
+            dcc.Dropdown(
+                id="dropdown_bar-inver",
+                options=[
+                    {'label': 'Total', 'value': 'TOTAL'},
+                    {'label': 'Fondo A', 'value': 'A'},
+                    {'label': 'Fondo B', 'value': 'B'},
+                    {'label': 'Fondo C', 'value': 'C'},
+                    {'label': 'Fondo D', 'value': 'D'},
+                    {'label': 'Fondo E', 'value': 'E'},
+                ],
+                value='TOTAL',
+                className="dcc_control no-print"
+            ),
+            dcc.Loading(id = "loading-icon_bar-inver", children=[dcc.Graph(id='fig_bar-inver',figure = bar_inver)],type="circle"),    
+        ], className='pretty_container'
+    ),
+    html.Div(
+        [
+            dcc.Dropdown(
+                id="dropdown_bar-nacio",
+                options=[
+                    {'label': 'Total', 'value': 'TOTAL'},
+                    {'label': 'Fondo A', 'value': 'A'},
+                    {'label': 'Fondo B', 'value': 'B'},
+                    {'label': 'Fondo C', 'value': 'C'},
+                    {'label': 'Fondo D', 'value': 'D'},
+                    {'label': 'Fondo E', 'value': 'E'},
+                ],
+                value='TOTAL',
+                className="dcc_control no-print"
+            ),
+            dcc.Loading(id = "loading-icon_bar-nacio", children=[dcc.Graph(id='fig_bar-nacio',figure = bar_nacio)],type="circle"),
+        ], className='pretty_container'
+    ),
+    html.Div(
+        [
+            dcc.Dropdown(
+                id="dropdown_bar-inter",
+                options=[
+                    {'label': 'Total', 'value': 'TOTAL'},
+                    {'label': 'Fondo A', 'value': 'A'},
+                    {'label': 'Fondo B', 'value': 'B'},
+                    {'label': 'Fondo C', 'value': 'C'},
+                    {'label': 'Fondo D', 'value': 'D'},
+                    {'label': 'Fondo E', 'value': 'E'},
+                ],
+                value='TOTAL',
+                className="dcc_control no-print"
+            ),
+            dcc.Loading(id = "loading-icon_bar-inter", children=[dcc.Graph(id='fig_bar-inter',figure = bar_inter)],type="circle"),  
+        ], className='pretty_container'
+    ),
+    
 ])
 
 layout_nacional = html.Div([

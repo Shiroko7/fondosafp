@@ -46,11 +46,11 @@ def fig_forwards_nacional(df, df_vf, df_q):
     fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_E'],yaxis="y2", name ='Patrimonio Fondo E',visible="legendonly"))
 
 
-    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_A'], yaxis="y3", name ='Q Index Fondo A',visible="legendonly"))
-    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_B'], yaxis="y3", name ='Q Index Fondo B',visible="legendonly"))
-    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_C'], yaxis="y3", name ='Q Index Fondo C',visible="legendonly"))
-    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_D'], yaxis="y3", name ='Q Index Fondo D',visible="legendonly"))
-    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_E'], yaxis="y3", name ='Q Index Fondo E',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_A'], yaxis="y3", name ='Cambios de Fondo A',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_B'], yaxis="y3", name ='Cambios de Fondo B',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_C'], yaxis="y3", name ='Cambios de Fondo C',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_D'], yaxis="y3", name ='Cambios de Fondo D',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_E'], yaxis="y3", name ='Cambios de Fondo E',visible="legendonly"))
 
     # Create axis objects
     fig.update_layout(
@@ -159,6 +159,24 @@ def fig_extranjeros(df):
     fig.update_layout(yaxis={'title':'Extranjeros'},
                       title= 'Activos: ' + 'MMUSD')
     return fig
+
+
+def fig_hedge(df_total,df_fn):
+    df_fn = dif_forward_nacional(df_fn)
+    fig = go.Figure()
+    
+    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['TOTAL']/df_total['MMUSD_TOTAL']*100,name ='Total'))
+    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['Fondo_A']/df_total['MMUSD_A']*100,name ='fondo A'))
+    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['Fondo_B']/df_total['MMUSD_B']*100,name ='fondo B'))
+    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['Fondo_C']/df_total['MMUSD_C']*100,name ='fondo C'))
+    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['Fondo_D']/df_total['MMUSD_D']*100,name ='fondo D'))
+    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['Fondo_E']/df_total['MMUSD_E']*100,name ='fondo E'))    
+
+    fig.update_layout(yaxis={'title':'%Fondo'},
+                      title= 'Porcentaje Inversión Extranjera Hedge')
+
+    return fig
+
 
 
 def fig_valor_fondos(df):
