@@ -126,6 +126,26 @@ def download_vf(fecha):
             out = "Warning: Valores de cuota y patrimonio AFP FONDO: {0} {0} no se pudo descargar".format(f,fecha_x)
         print(out)
     
+def fetch_last_update(fecha):
+    #PARSE DATE
+    fecha_x = "".join(str(fecha).split('-'))
+    year,month,day = str(fecha).split('-')
+    
+    #MAKE POST REQUEST
+    url = "https://www.spensiones.cl/apps/valoresCuotaFondo/vcfAFP.php?tf="
+    fondos = ['A','B','C','D','E']
+    
+    
+    for f in fondos:
+        #actual download 
+        try:
+            html = urllib.request.urlopen(url+fondos[0])
+            pd.read_html(html,thousands = '.',decimal =',')[0]
+            print(pd)
+            
+        except:
+            out = "Warning: Valores de cuota y patrimonio AFP FONDO: {0} {0} no se pudo leer".format(f,fecha_x)
+            return out 
 
 #procesar data 
 def forward_nacional(start_date,end_date):
@@ -508,7 +528,7 @@ def vqfondos(start_date,end_date):
 
 #conectarse a la base de datos
 #cambiar esto por un log in con input de usuario
-database = create_engine('postgres://upikdubnbguorg:5a9b3efe2006422165d5adef4326622d51ced36ca4834561efad86924b94c283@ec2-52-7-39-178.compute-1.amazonaws.com:5432/dap4j6p1sghjtc')  
+database = create_engine('postgres://pfjqxkqzdbefyh:9b90121091b9a7aaba720a1b848f7b707a82c8db9e374e1d7d3b16e96f6f6258@ec2-35-174-127-63.compute-1.amazonaws.com:5432/d3d9vrbrckuu50')  
 base = declarative_base()
 
 #ORM entidades de la bd
