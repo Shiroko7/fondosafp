@@ -1,11 +1,21 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import plots
-from api import query_by_daterange
+from api import query_by_daterange, fetch_last_update
 from datetime import date, timedelta, datetime, time
 
 start_date = date(2016,1,1)
-end_date = date(2020,5,1)
+
+today = date.today()
+
+#cambiar por today eventualmente
+end_date = today
+
+
+#last update info
+confirmado, disponible = fetch_last_update(today)
+
+#dataframes
 
 df_fn = query_by_daterange("forwards_nacionales",start_date,end_date)
 df_inter = query_by_daterange("inversion_internacional",start_date,end_date)
@@ -15,6 +25,7 @@ df_activos = query_by_daterange("activos",start_date,end_date)
 df_extranjeros = query_by_daterange("extranjeros",start_date,end_date)
 df_vf = query_by_daterange("valor_fondos",start_date,end_date)
 df_q = query_by_daterange("q_index",start_date,end_date)
+
 
 
 #layout forwards nacionales
@@ -81,13 +92,21 @@ links = html.Div(
     ],className="pretty_container three columns"
 )
 
-layout_home = html.Div([
+
+layout_header = html.Div([
     links,
     header,
 ],className="row")
 
+layout_home = html.Div([
+    layout_header,
+    html.H4('Último confirmado: '+confirmado),   
+    html.H4('Último disponible: '+disponible)    
+])
+
+
 layout_datos = html.Div([
-    layout_home,
+    layout_header,
     html.H3('Forwards Nacionales'),
     html.Div(
         [
@@ -167,7 +186,7 @@ layout_datos = html.Div([
 ])
 
 layout_nacional = html.Div([
-    layout_home,
+    layout_header,
 
     html.H3('Inversión Nacional'),
     html.Div(
@@ -215,7 +234,7 @@ layout_nacional = html.Div([
 ])
 
 layout_internacional = html.Div([
-    layout_home,
+    layout_header,
     html.H3('Inversión Internacional'),
     html.Div(
         [
@@ -239,7 +258,7 @@ layout_internacional = html.Div([
 ])
 
 layout_activos = html.Div([
-    layout_home,
+    layout_header,
     html.H3('Activos de Pensiones'),
     html.Div(
         [            
@@ -260,7 +279,7 @@ layout_activos = html.Div([
 
 
 layout_extranjeros = html.Div([
-    layout_home,
+    layout_header,
     html.H3('Inversión en Regiones'),
     html.Div(
         [

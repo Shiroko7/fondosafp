@@ -215,22 +215,24 @@ def bar_inversion_nacional(df_nacio,fondo):
     y_bb = list()
     y_dp = list()
     y_otros = list()
+    
     for i in fechas:
         rv = df_nacio[(df_nacio['Fecha']== i) & (df_nacio['Nombre']== 'RENTA VARIABLE')]['Porcentaje_'+fondo]
-        y_rv.append(float(rv))
+
+        y_rv.append(float(rv.squeeze()))
 
         instr = df_nacio[(df_nacio['Fecha']== i) & (df_nacio['Nombre']== 'Instrumentos')]['Porcentaje_'+fondo]
        
-        y_instr.append(float(instr))
+        y_instr.append(float(instr.squeeze()))
 
         bb = df_nacio[(df_nacio['Fecha']== i) & (df_nacio['Nombre']== 'Bonos Bancarios')]['Porcentaje_'+fondo]
-        y_bb.append(float(bb))
+        y_bb.append(float(bb.squeeze()))
 
         dp = df_nacio[(df_nacio['Fecha']== i) & (df_nacio['Nombre']== 'Depósitos a Plazo')]['Porcentaje_'+fondo]
-        y_dp.append(float(dp))
+        y_dp.append(float(dp.squeeze()))
 
         rf = df_nacio[(df_nacio['Fecha']== i) & (df_nacio['Nombre']== 'RENTA FIJA')]['Porcentaje_'+fondo]
-        otros = float(rf) - float(instr) - float(bb) - float(dp)
+        otros = float(rf.squeeze()) - float(instr.squeeze()) - float(bb.squeeze()) - float(dp.squeeze())
         y_otros.append(otros)
 
     fig.add_trace(go.Bar(x=fechas, y=y_otros,name='RF: Otros'))

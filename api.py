@@ -133,19 +133,23 @@ def fetch_last_update(fecha):
     
     #MAKE POST REQUEST
     url = "https://www.spensiones.cl/apps/valoresCuotaFondo/vcfAFP.php?tf="
-    fondos = ['A','B','C','D','E']
+    fondos = ['A']#,'B','C','D','E']
     
     
     for f in fondos:
         #actual download 
         try:
-            html = urllib.request.urlopen(url+fondos[0])
-            pd.read_html(html,thousands = '.',decimal =',')[0]
-            print(pd)
+            html = urllib.request.urlopen(url+f).read()
+            dlistas = pd.read_html(html,thousands = '.',decimal =',')[1]
+            dlistas = list(dlistas.columns)
+            confirmado = dlistas[0][2]
+            disponible = dlistas[1][2]
+            return confirmado, disponible
+
             
         except:
             out = "Warning: Valores de cuota y patrimonio AFP FONDO: {0} {0} no se pudo leer".format(f,fecha_x)
-            return out 
+            return out, " "
 
 #procesar data 
 def forward_nacional(start_date,end_date):
@@ -198,9 +202,9 @@ def dif_forward_nacional(df):
     dfc.loc[:,('Fondo_E')] = dfc.loc[:,('Fondo_E')].abs()*-1
     dfc.loc[:,('TOTAL')] = dfc.loc[:,('TOTAL')].astype('float64')*-1
     df = pd.concat([dfc, dfv]).groupby(['Fecha'], as_index=False).agg({'Fondo_A':'sum','Fondo_B':'sum','Fondo_C':'sum','Fondo_D':'sum','Fondo_E':'sum','TOTAL':'sum'})
-    df['Dif'] = df.loc[:,('TOTAL')].diff()
-    df['Giro'] = df['Dif'] > 0
-    df['Giro'] = df['Giro'].apply(lambda x: 'V' if x > 0 else 'C')
+    df.loc[:,('Dif')] = df.loc[:,('TOTAL')].diff()
+    df.loc[:,('Giro')] = df['Dif'] > 0
+    df.loc[:,('Giro')] = df['Giro'].apply(lambda x: 'V' if x > 0 else 'C')
     return df
         
         
@@ -414,12 +418,12 @@ def valor_fondos_historic(start_date,end_date):
     patrimonios =[i for i in list(df_A.columns) if 'Valor Patrimonio' in i]
     
     VF = pd.DataFrame(columns=['Fecha','VF_A','VF_B','VF_C','VF_D','VF_E'])
-    VF['Fecha'] = df_A['Fecha']
-    VF['VF_A'] = df_A[patrimonios].sum(axis=1)
-    VF['VF_B'] = df_B[patrimonios].sum(axis=1)
-    VF['VF_C'] = df_C[patrimonios].sum(axis=1)
-    VF['VF_D'] = df_D[patrimonios].sum(axis=1)
-    VF['VF_E'] = df_E[patrimonios].sum(axis=1)
+    VF.loc[:,('Fecha')] = df_A['Fecha']
+    VF.loc[:,('VF_A')] = df_A[patrimonios].sum(axis=1)
+    VF.loc[:,('VF_B')] = df_B[patrimonios].sum(axis=1)
+    VF.loc[:,('VF_C')] = df_C[patrimonios].sum(axis=1)
+    VF.loc[:,('VF_D')] = df_D[patrimonios].sum(axis=1)
+    VF.loc[:,('VF_E')] = df_E[patrimonios].sum(axis=1)
     return VF
 
 
@@ -434,7 +438,7 @@ def Q_index_historic(start_date,end_date):
     patrimonios =[i for i in list(df_A.columns) if 'Valor Patrimonio' in i]
 
     Q = pd.DataFrame(columns=['Fecha','Q_A','Q_B','Q_C','Q_D','Q_E'])
-    Q['Fecha'] = df_A['Fecha']
+    Q.loc[:,('Fecha')] = df_A['Fecha']
     fondos = ['A','B','C','D','E']
     df_fondos = [df_A,df_B,df_C,df_D,df_E]
     for f in range(len(fondos)):
@@ -473,11 +477,14 @@ def vcfondos(start_date,end_date):
             #leer archivo como string
             file = open(token, 'r')
             data = file.read()
-            vf = pd.read_html(data,thousands = '.',decimal =',')[3]
-            vf.columns = vf.columns.droplevel()
+            try:
+                vf = pd.read_html(data,thousands = '.',decimal =',')[3]
+                vf.columns = vf.columns.droplevel()
             
-            row['VF_'+f] = float(vf[vf['A.F.P.']=='TOTAL']['Valor del Patrimonio'].squeeze())
-    
+                row['VF_'+f] = float(vf[vf['A.F.P.']=='TOTAL']['Valor del Patrimonio'].squeeze())
+            except:
+                pass
+
             file.close()
 
         
@@ -508,15 +515,17 @@ def vqfondos(start_date,end_date):
             #leer archivo como string
             file = open(token, 'r')
             data = file.read()
-            vf = pd.read_html(data,thousands = '.',decimal =',')[3]
-            vf.columns = vf.columns.droplevel()
-            for afp in vf['A.F.P.']:
-                if afp == 'TOTAL':
-                    break
-                p = float(vf[vf['A.F.P.']==afp]['Valor del Patrimonio'].squeeze())
-                c = float(vf[vf['A.F.P.']==afp]['Valor Cuota'].squeeze())
-                row['Q_'+f] += p/c
-    
+            try:
+                vf = pd.read_html(data,thousands = '.',decimal =',')[3]
+                vf.columns = vf.columns.droplevel()
+                for afp in vf['A.F.P.']:
+                    if afp == 'TOTAL':
+                        break
+                    p = float(vf[vf['A.F.P.']==afp]['Valor del Patrimonio'].squeeze())
+                    c = float(vf[vf['A.F.P.']==afp]['Valor Cuota'].squeeze())
+                    row['Q_'+f] += p/c
+            except:
+                pass
             file.close()
 
         
@@ -661,7 +670,7 @@ base.metadata.create_all(database)
 
 #delete rows by date 
 def delete_by_date(fecha):
-
+    #estos son mensuales
     input_rows = session.query(FORWARDS_NACIONALES).filter(FORWARDS_NACIONALES.Fecha == fecha).delete()
 
     input_rows = session.query(INVERSION_NACIONAL).filter(INVERSION_NACIONAL.Fecha == fecha).delete()
@@ -674,9 +683,10 @@ def delete_by_date(fecha):
     
     input_rows = session.query(EXTRANJEROS).filter(EXTRANJEROS.Fecha == fecha).delete()
     
-    input_rows = session.query(VALOR_FONDOS).filter(VALOR_FONDOS.Fecha == fecha).delete()
+    #estos son diarios
+    input_rows = session.query(VALOR_FONDOS).filter(VALOR_FONDOS.Fecha >= fecha, VALOR_FONDOS.Fecha <= fecha + timedelta(days = 30)).delete()
     
-    input_rows = session.query(Q_INDEX).filter(Q_INDEX.Fecha == fecha).delete()
+    input_rows = session.query(Q_INDEX).filter(Q_INDEX.Fecha >= fecha, Q_INDEX.Fecha <= fecha + timedelta(days = 30)).delete()
     
     session.commit()
             
@@ -692,8 +702,8 @@ def upload_to_sql(start_date,end_date = None):
     df_total_activos,df_nacional,df_internacional = inversiones(start_date,end_date)
     df_activos = activos(start_date,end_date)
     df_extranjeros = extranjeros(start_date,end_date)
-    df_vf = valor_fondos(start_date,end_date)
-    df_q = Q_index(start_date,end_date)
+    df_vf = vcfondos(start_date,end_date)
+    df_q = vqfondos(start_date,end_date)
     
     if not df_fn.empty: 
         df_fn.to_sql("forwards_nacionales",
