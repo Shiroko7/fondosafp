@@ -9,7 +9,7 @@ start_date = date(2016,1,1)
 today = date.today()
 
 #cambiar por today eventualmente
-end_date = date(2016,6,12)
+end_date = date(2020,6,12)
 
 
 #last update info
