@@ -37,7 +37,7 @@ bar_inver = plots.bar_inversion(df_nacio,df_inter,'TOTAL')
 
 fig_inv_total = plots.fig_inversiones(df_total,'TOTAL ACTIVOS','MMUSD')
 
-fig_inter_hedge = plots.fig_hedge(df_total,df_fn)
+fig_inter_hedge = plots.fig_hedge(df_inter,df_fn)
 
 
 #layout inversiones afp nacionales

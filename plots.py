@@ -161,16 +161,16 @@ def fig_extranjeros(df):
     return fig
 
 
-def fig_hedge(df_total,df_fn):
+def fig_hedge(df_inter,df_fn):
     df_fn = dif_forward_nacional(df_fn)
     fig = go.Figure()
-    
-    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['TOTAL']/df_total['MMUSD_TOTAL']*100,name ='Total'))
-    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['Fondo_A']/df_total['MMUSD_A']*100,name ='fondo A'))
-    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['Fondo_B']/df_total['MMUSD_B']*100,name ='fondo B'))
-    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['Fondo_C']/df_total['MMUSD_C']*100,name ='fondo C'))
-    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['Fondo_D']/df_total['MMUSD_D']*100,name ='fondo D'))
-    fig.add_trace(go.Scatter(x=df_total['Fecha'], y=df_fn['Fondo_E']/df_total['MMUSD_E']*100,name ='fondo E'))    
+    df_inter = df_inter[df_inter['Nombre'] == 'INVERSIÓN EXTRANJERA'].reset_index()
+    fig.add_trace(go.Scatter(x=df_inter['Fecha'], y=df_fn['TOTAL']/df_inter['MMUSD_TOTAL']*100,name ='Total'))
+    fig.add_trace(go.Scatter(x=df_inter['Fecha'], y=df_fn['Fondo_A']/df_inter['MMUSD_A']*100,name ='fondo A'))
+    fig.add_trace(go.Scatter(x=df_inter['Fecha'], y=df_fn['Fondo_B']/df_inter['MMUSD_B']*100,name ='fondo B'))
+    fig.add_trace(go.Scatter(x=df_inter['Fecha'], y=df_fn['Fondo_C']/df_inter['MMUSD_C']*100,name ='fondo C'))
+    fig.add_trace(go.Scatter(x=df_inter['Fecha'], y=df_fn['Fondo_D']/df_inter['MMUSD_D']*100,name ='fondo D'))
+    fig.add_trace(go.Scatter(x=df_inter['Fecha'], y=df_fn['Fondo_E']/df_inter['MMUSD_E']*100,name ='fondo E'))    
 
     fig.update_layout(yaxis={'title':'%Fondo'},
                       title= 'Porcentaje Inversión Extranjera Hedge')
