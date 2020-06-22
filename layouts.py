@@ -17,14 +17,15 @@ confirmado, disponible = fetch_last_update(today)
 
 #dataframes
 
-df_fn = query_by_daterange("forwards_nacionales",start_date,end_date)
-df_inter = query_by_daterange("inversion_internacional",start_date,end_date)
-df_nacio = query_by_daterange("inversion_nacional",start_date,end_date)
-df_total = query_by_daterange("inversion_total",start_date,end_date)
-df_activos = query_by_daterange("activos",start_date,end_date)
-df_extranjeros = query_by_daterange("extranjeros",start_date,end_date)
-df_vf = query_by_daterange("valor_fondos",start_date,end_date)
-df_q = query_by_daterange("q_index",start_date,end_date)
+df_fn = query_by_daterange("forwards_nacionales",start_date,end_date).dropna()
+df_inter = query_by_daterange("inversion_internacional",start_date,end_date).dropna()
+df_nacio = query_by_daterange("inversion_nacional",start_date,end_date).dropna()
+df_total = query_by_daterange("inversion_total",start_date,end_date).dropna()
+df_activos = query_by_daterange("activos",start_date,end_date).dropna()
+df_extranjeros = query_by_daterange("extranjeros",start_date,end_date).dropna()
+df_vf = query_by_daterange("valor_fondos",start_date,end_date).dropna()
+df_q = query_by_daterange("q_index",start_date,end_date).dropna()
+
 
 
 
