@@ -1,6 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import plots
+import pandas as pd
 from api import query_by_daterange, fetch_last_update
 from datetime import date, timedelta, datetime, time
 
@@ -8,12 +9,10 @@ start_date = date(2016,1,1)
 
 today = date.today()
 
-#cambiar por today eventualmente
-end_date = today#date(2020,6,12)
-
-
 #last update info
 confirmado, disponible = fetch_last_update(today)
+end_date = pd.to_datetime(disponible, format="%d-%b-%Y")
+
 
 #dataframes
 
@@ -71,7 +70,7 @@ header = html.Div(
                 html.Div(
                     [
                         html.H2('AFP Data',),
-                        html.H6('Versión Beta 1.4.1',className='no-print'),
+                        html.H6('Versión Beta 1.8.1',className='no-print'),
                     ],className='nine columns',style = {'text-align': 'center', 'margin-right': '16.6%'}
                 )
             ],className='nine columns',
