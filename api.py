@@ -148,9 +148,8 @@ def fetch_last_update(fecha):
 
             
         except Exception as e:
-            print(e)
             out = "Warning: Valores de cuota y patrimonio AFP FONDO: {0} {0} no se pudo leer".format(f,fecha_x)
-            return out, " "
+            return out, str(e)
 
 #procesar data 
 def forward_nacional(start_date,end_date):
