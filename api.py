@@ -697,6 +697,8 @@ def upload_to_sql(start_date,end_date = None):
     #IMPORTANTE: CADA UPLOAD DE UN DÍA PRIMERO BOTA LO QUE YA ESTA, PARA NO DUPLICAR DATA ACCIDENTALMENTE
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
         delete_by_date(fecha)
+    for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
+        delete_by_date(last_day_of_month(fecha))
 
     df_fn = forward_nacional(start_date,end_date)
     df_total_activos,df_nacional,df_internacional = inversiones(start_date,end_date)
