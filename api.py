@@ -147,7 +147,8 @@ def fetch_last_update(fecha):
             return confirmado, disponible
 
             
-        except:
+        except Exception as e:
+            print(e)
             out = "Warning: Valores de cuota y patrimonio AFP FONDO: {0} {0} no se pudo leer".format(f,fecha_x)
             return out, " "
 
