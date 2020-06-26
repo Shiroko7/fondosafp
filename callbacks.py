@@ -154,11 +154,11 @@ def update_bar_inter(value):
 
 
 @app.callback(
-    Output('update-div','children'),
+    Output('update-load','children'),
     [Input('update-button','n_clicks')]
 )
 def update_button(n_clicks):
     if n_clicks is not None:
         auto_update()
-        return html.Div("Descargando...")
-    return []
+        return html.Div("Actualizado")
+    return [html.A(['Actualizar data'],id="update-button",className="button no-print print",style={'margin': '0 auto'})]

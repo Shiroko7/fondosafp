@@ -102,8 +102,7 @@ layout_home = html.Div([
     layout_header,
     html.H4('Último confirmado: '+confirmado),   
     html.H4('Último disponible: '+disponible),
-    dcc.Loading(children=[html.A(['Actualizar data'],id="update-button",className="button no-print print",style={'margin': '0 auto'}),],id="update-load"),
-    html.Div(id='update-div')
+    dcc.Loading(children=[html.A(['Actualizar data'],id="update-button",className="button no-print print",style={'margin': '0 auto'}),],id="update-load",style={'margin': '0 0 0 100px','float': 'left'})
 ])
 
 
