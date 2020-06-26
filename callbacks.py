@@ -1,5 +1,6 @@
 from dash.dependencies import Input, Output
 import plots
+import dash_html_components as html
 from app import app
 from layouts import df_nacio, df_inter
 from update import auto_update
@@ -153,9 +154,11 @@ def update_bar_inter(value):
 
 
 @app.callback(
-    Output('pdf-div','children'),
-    [Input('pdf-button','n_clicks')]
+    Output('update-div','children'),
+    [Input('update-button','n_clicks')]
 )
 def update_button(n_clicks):
     if n_clicks is not None:
         auto_update()
+        return html.Div("Descargando...")
+    return []
