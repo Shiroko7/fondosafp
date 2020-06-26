@@ -2,6 +2,7 @@ from dash.dependencies import Input, Output
 import plots
 from app import app
 from layouts import df_nacio, df_inter
+from update import auto_update
 
 @app.callback(
     Output('fig-na', 'figure'),
@@ -149,3 +150,12 @@ def update_bar_inter(value):
     fig = plots.bar_inversion_internacional(df_inter,value)
 
     return fig
+
+
+@app.callback(
+    Output('pdf-div','children'),
+    [Input('pdf-button','n_clicks')]
+)
+def update_button(n_clicks):
+    if n_clicks is not None:
+        auto_update()
