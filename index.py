@@ -7,8 +7,6 @@ from app import server
 
 import callbacks
 
-from layout_forwards import layout_datos
-
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content')
@@ -16,12 +14,15 @@ app.layout = html.Div([
 
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
+
+
 def display_page(pathname):
     if pathname == '/':
         from layout_home import layout_home
         return layout_home
 
     elif pathname == '/apps/datos-principales':
+        from layout_forwards import layout_datos
         return layout_datos
 
     elif pathname == '/apps/inversion-nacional':
