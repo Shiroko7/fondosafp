@@ -7,7 +7,7 @@ from api import dif_forward_nacional
 
 # graficos
 
-def fig_forwards_nacional(df, df_vf, df_q):
+def fig_forwards_nacional(df,usdclp, df_vf, df_q):
     dfc = df[df['Nombre'] == 'Compra']
     dfv = df[df['Nombre'] == 'Venta']
     dif = dif_forward_nacional(df)
@@ -25,20 +25,129 @@ def fig_forwards_nacional(df, df_vf, df_q):
 
     fig = go.Figure()
     #forwards 
-    fig.add_trace(go.Scatter(x=dif['Fecha'], y=dif['TOTAL'], yaxis="y", name ='Total Vendido', marker_color='RoyalBlue'))
+    fig.add_trace(go.Scatter(x=dif['Fecha'], y=dif['TOTAL'], yaxis="y", name ='Pos Neta Fwd (Vendida)', marker_color='RoyalBlue'))
 
     fig.add_trace(go.Bar(
-        name = 'Dif fix',
+        name = 'Cambio en Pos Neta Fwd',
         x = dif['Fecha'],
         y = dif['Dif'].abs(),
         marker=dict(color=color.tolist()),
         hovertext=hover
     ))
 
-    fig.add_trace(go.Scatter(x=dfc['Fecha'],y=dfc['TOTAL'].abs(), yaxis="y", name='Compra', marker_color='red',visible="legendonly"))
-    fig.add_trace(go.Scatter(x=dfv['Fecha'],y=dfv['TOTAL'], yaxis="y", name='Venta', marker_color='green',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=dfc['Fecha'],y=dfc['TOTAL'].abs(), yaxis="y", name='Pos Comprada Fwd', marker_color='red',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=dfv['Fecha'],y=dfv['TOTAL'], yaxis="y", name='Pos Vendida Fwd', marker_color='green',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=usdclp['Fecha'],y=usdclp['Precio'], yaxis="y2", name='USD/CLP', marker_color='orange', visible="legendonly"))
+    
+    # Create axis objects
+    fig.update_layout(
+        xaxis=dict(
+            domain=[0.1, 1]
+        ),
+        yaxis=dict(
+            title="Forwards",
+            titlefont=dict(
+                color="RoyalBlue"
+            ),
+            tickfont=dict(
+                color="RoyalBlue"
+            ),
+            position=0
+        ),
+        yaxis2=dict(
+            title="CLP",
+            titlefont=dict(
+                color="orange"
+            ),
+            tickfont=dict(
+                color="orange"
+            ),
+            anchor="x",
+            overlaying="y",
+            position=0.1
+        ),
+    )
+
+    fig.update_layout(title= 'Venta neta FWD USDCLP')
+    
+    return fig
+
+def clp_to_usdp(row,usdclp,f):
+    #print(usdclp.columns)
+    #print(row.columns)
+    fx = usdclp[usdclp['Fecha'] == row['Fecha']]['Precio'] 
+    if fx is not None and len(fx) != 0:
+        return row['VF_'+f] / fx.squeeze()
+    else:
+        return row['VF_'+f] / 820
+
+def fig_afp(df_vf, usdclp):
+    
+    df_vf['VF_A'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'A'),axis=1)
+    df_vf['VF_B'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'B'),axis=1)
+    df_vf['VF_C'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'C'),axis=1)
+    df_vf['VF_D'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'D'),axis=1)
+    df_vf['VF_E'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'E'),axis=1)
+
+    fig = go.Figure()
 
     #fondos
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_A'],yaxis="y2", name ='Patrimonio Fondo A'))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_B'],yaxis="y2", name ='Patrimonio Fondo B',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_C'],yaxis="y2", name ='Patrimonio Fondo C'))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_D'],yaxis="y2", name ='Patrimonio Fondo D',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_E'],yaxis="y2", name ='Patrimonio Fondo E'))
+
+
+    #fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_A'], yaxis="y3", name ='Cambios de Fondo A',visible="legendonly"))
+    #fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_B'], yaxis="y3", name ='Cambios de Fondo B',visible="legendonly"))
+    #fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_C'], yaxis="y3", name ='Cambios de Fondo C',visible="legendonly"))
+    #fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_D'], yaxis="y3", name ='Cambios de Fondo D',visible="legendonly"))
+    #fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_E'], yaxis="y3", name ='Cambios de Fondo E',visible="legendonly"))
+
+    
+    fig.update_layout(yaxis={'title':'USD'},title= 'Patrimonio Fondos de Pensiones')
+    return fig
+
+def fig_forwards_nacional_afp(df, usdclp,df_vf, df_q):
+    dfc = df[df['Nombre'] == 'Compra']
+    dfv = df[df['Nombre'] == 'Venta']
+    dif = dif_forward_nacional(df)
+    
+    color=np.array(['rgb(255,255,255)']*dif['Dif'].shape[0])
+    color[dif['Dif']<0]='red'
+    color[dif['Dif']>=0]='green'
+
+    hover = list()
+    for i in dif['Dif']:
+        if i >= 0:
+            hover.append('▲ UP: ' + str(round(i,2)))
+        else:
+            hover.append('▼ DOWN: ' + str(round(i,2)))
+
+    fig = go.Figure()
+    #forwards 
+    fig.add_trace(go.Scatter(x=dif['Fecha'], y=dif['TOTAL'], yaxis="y", name ='Pos Neta Fwd (Vendida)', marker_color='RoyalBlue'))
+
+    fig.add_trace(go.Bar(
+        name = 'Cambio en Pos Neta Fwd',
+        x = dif['Fecha'],
+        y = dif['Dif'].abs(),
+        marker=dict(color=color.tolist()),
+        hovertext=hover
+    ))
+
+    fig.add_trace(go.Scatter(x=dfc['Fecha'],y=dfc['TOTAL'].abs(), yaxis="y", name='Pos Comprada Fwd', marker_color='red',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=dfv['Fecha'],y=dfv['TOTAL'], yaxis="y", name='Pos Vendida Fwd', marker_color='green',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=usdclp['Fecha'],y=usdclp['Precio'], yaxis="y4", name='USD/CLP', marker_color='orange',visible="legendonly"))
+
+    #fondos
+    df_vf['VF_A'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'A'),axis=1)
+    df_vf['VF_B'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'B'),axis=1)
+    df_vf['VF_C'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'C'),axis=1)
+    df_vf['VF_D'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'D'),axis=1)
+    df_vf['VF_E'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'E'),axis=1)
+
     fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_A'],yaxis="y2", name ='Patrimonio Fondo A',visible="legendonly"))
     fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_B'],yaxis="y2", name ='Patrimonio Fondo B',visible="legendonly"))
     fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_C'],yaxis="y2", name ='Patrimonio Fondo C',visible="legendonly"))
@@ -55,7 +164,7 @@ def fig_forwards_nacional(df, df_vf, df_q):
     # Create axis objects
     fig.update_layout(
         xaxis=dict(
-            domain=[0, 0.8]
+            domain=[0.1, 0.8]
         ),
         yaxis=dict(
             title="Forwards",
@@ -64,10 +173,11 @@ def fig_forwards_nacional(df, df_vf, df_q):
             ),
             tickfont=dict(
                 color="RoyalBlue"
-            )
+            ),
+            position=0
         ),
         yaxis2=dict(
-            title="AFP U Index",
+            title="AFP Fondos USD",
             titlefont=dict(
                 color="#101414"
             ),
@@ -76,10 +186,11 @@ def fig_forwards_nacional(df, df_vf, df_q):
             ),
             anchor="x",
             overlaying="y",
-            side="right"
+            side="right",
+            position=0.8
         ),
         yaxis3=dict(
-            title="AFP Fondos",
+            title="AFP Index de Cambio",
             titlefont=dict(
                 color="#323838"
             ),
@@ -90,6 +201,19 @@ def fig_forwards_nacional(df, df_vf, df_q):
             overlaying="y",
             side="right",
             position=0.9
+        ),
+        yaxis4=dict(
+            title="USDCLP",
+            titlefont=dict(
+                color="orange"
+            ),
+            tickfont=dict(
+                color="orange"
+            ),
+            anchor="free",
+            overlaying="y",
+            side="left",
+            position=0.1
         )
     )
 
@@ -109,7 +233,9 @@ def fig_inversiones(df_input,label,tipo):
         t = 'MMUSD_'
         y_title = 'MMUSD'
         title = label + ' MMUSD'
-        
+    if label == 'Instrumentos':
+        title = 'Inversión en Bonos de Tesorería y Centrales'    
+    
     fig.add_trace(go.Scatter(x=df['Fecha'], y=df[t+'TOTAL'],name ='Total'))
     fig.add_trace(go.Scatter(x=df['Fecha'], y=df[t+'A'],name ='fondo A'))
     fig.add_trace(go.Scatter(x=df['Fecha'], y=df[t+'B'],name ='fondo B'))

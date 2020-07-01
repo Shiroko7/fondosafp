@@ -657,6 +657,12 @@ class Q_INDEX(base):
     Q_C = Column(Float)
     Q_D = Column(Float)
     Q_E = Column(Float)
+
+class USDCLP(base):
+    __tablename__ = 'usdclp'
+    index = Column(Integer, autoincrement=True, primary_key=True)
+    Fecha = Column(DateTime)
+    Precio = Column(Float)
     
 #create session
 Session = sessionmaker(database)  
@@ -687,9 +693,18 @@ def delete_by_date(fecha):
     input_rows = session.query(VALOR_FONDOS).filter(VALOR_FONDOS.Fecha >= fecha, VALOR_FONDOS.Fecha <= fecha + timedelta(days = 30)).delete()
     
     input_rows = session.query(Q_INDEX).filter(Q_INDEX.Fecha >= fecha, Q_INDEX.Fecha <= fecha + timedelta(days = 30)).delete()
+
+    input_rows = session.query(USDCLP).filter(USDCLP.Fecha >= fecha, USDCLP.Fecha <= fecha + timedelta(days = 30)).delete()
     
     session.commit()
             
+def usdclp():
+    usdclp_hist = pd.read_csv('USD_CLP Historical Data.csv',delimiter=',') 
+    usdclp_hist['Date'] = pd.to_datetime(usdclp_hist['Date'], format='%b %d, %Y')
+    usdclp_hist = usdclp_hist[['Date','Price']]
+    usdclp_hist.columns = ['Fecha', 'Precio']
+    return usdclp_hist
+
 #UPLOAD DATA
 def upload_to_sql(start_date,end_date = None):
     if end_date == None:
@@ -706,7 +721,21 @@ def upload_to_sql(start_date,end_date = None):
     df_extranjeros = extranjeros(start_date,end_date)
     df_vf = vcfondos(start_date,end_date)
     df_q = vqfondos(start_date,end_date)
-    
+    #df_usdclp = usdclp()
+#
+    #if not df_usdclp.empty: 
+    #    df_usdclp.to_sql("usdclp",
+    #                   database,
+    #                   if_exists='append',
+    #                   schema='public',
+    #                   index=False,
+    #                   chunksize=500,
+    #                   dtype={"Fecha": DateTime,
+    #                          "Precio": Float,}
+    #               )
+    #else:
+    #    print("Error inesparado: forwards nacionales")
+
     if not df_fn.empty: 
         df_fn.to_sql("forwards_nacionales",
                        database,
@@ -901,6 +930,8 @@ def query_by_daterange(label,start_date,end_date):
         input_rows = session.query(VALOR_FONDOS).filter(VALOR_FONDOS.Fecha.between(start_date,end_date))
     elif label == 'q_index':
         input_rows = session.query(Q_INDEX).filter(Q_INDEX.Fecha.between(start_date,end_date))
+    elif label == 'usdclp':
+        input_rows = session.query(USDCLP).filter(USDCLP.Fecha.between(start_date,end_date))
     else:
         return None
 
