@@ -6,7 +6,7 @@ from app import app
 from app import server
 
 import callbacks
-from layout_home import layout_home
+
 from layout_forwards import layout_datos
 
 app.layout = html.Div([
@@ -18,6 +18,7 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/':
+        from layout_home import layout_home
         return layout_home
 
     elif pathname == '/apps/datos-principales':
