@@ -33,7 +33,7 @@ links = html.Div(
     [
         html.Ul(
             [
-                html.Li([dcc.Link('Forward Nacionales', href='/apps/datos-principales'),]),
+                html.Li([dcc.Link('Forward Nacionales', href='/apps/forwards-nacionales'),]),
                 html.Li([dcc.Link('Inversiones', href='/apps/inversiones'),]),
                 html.Li([dcc.Link('Inversión Nacional', href='/apps/inversion-nacional'),]),
                 html.Li([dcc.Link('Inversión Internacional', href='/apps/inversion-internacional'),]),

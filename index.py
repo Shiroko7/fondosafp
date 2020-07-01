@@ -21,7 +21,7 @@ def display_page(pathname):
         from layout_home import layout_home
         return layout_home
 
-    elif pathname == '/apps/datos-principales':
+    elif pathname == '/apps/forwards-nacionales':
         from layout_forwards import layout_datos
         return layout_datos
 
