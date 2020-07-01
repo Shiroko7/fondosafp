@@ -2,7 +2,8 @@ from dash.dependencies import Input, Output
 import plots
 import dash_html_components as html
 from app import app
-from layouts import df_nacio, df_inter
+from layout_nacional import df_nacio
+from layout_internacional import df_inter
 from update import auto_update
 
 @app.callback(

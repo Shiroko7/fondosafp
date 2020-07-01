@@ -4,8 +4,10 @@ from dash.dependencies import Input, Output
 
 from app import app
 from app import server
-from layouts import layout_datos,layout_activos, layout_extranjeros, layout_home, layout_internacional, layout_nacional#layout_afp,
+
 import callbacks
+from layout_home import layout_home
+from layout_forwards import layout_datos
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -17,15 +19,24 @@ app.layout = html.Div([
 def display_page(pathname):
     if pathname == '/':
         return layout_home
+
     elif pathname == '/apps/datos-principales':
         return layout_datos
+
     elif pathname == '/apps/inversion-nacional':
+        from layout_nacional import layout_nacional
         return layout_nacional
+    
     elif pathname == '/apps/inversion-internacional':
+        from layout_internacional import layout_internacional
         return layout_internacional
+
     elif pathname == '/apps/activos':
+        from layout_activos import layout_activos
         return layout_activos
+
     elif pathname == '/apps/extranjeros':
+        from layout_extranjeros import layout_extranjeros
         return layout_extranjeros
     #elif pathname == '/apps/valores':
     #    return layout_afp
