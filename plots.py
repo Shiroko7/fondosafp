@@ -105,8 +105,9 @@ def fig_afp(df_vf, usdclp):
     #fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_D'], yaxis="y3", name ='Cambios de Fondo D',visible="legendonly"))
     #fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_E'], yaxis="y3", name ='Cambios de Fondo E',visible="legendonly"))
 
+    fig.update_layout(yaxis={'title':"USD"},
+                      title= "Patrimonio Fondos de Pensiones")
     
-    fig.update_layout(yaxis={'title':'USD'},title= 'Patrimonio Fondos de Pensiones')
     return fig
 
 def fig_forwards_nacional_afp(df, usdclp,df_vf, df_q):
