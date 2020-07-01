@@ -27,6 +27,10 @@ def display_page(pathname):
     elif pathname == '/apps/inversion-nacional':
         from layout_nacional import layout_nacional
         return layout_nacional
+
+    elif pathname == '/apps/inversiones':
+        from layout_inversiones import layout_inversiones
+        return layout_inversiones
     
     elif pathname == '/apps/inversion-internacional':
         from layout_internacional import layout_internacional
