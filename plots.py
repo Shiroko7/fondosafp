@@ -92,11 +92,11 @@ def fig_afp(df_vf, usdclp):
     fig = go.Figure()
 
     #fondos
-    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_A'],yaxis="y2", name ='Patrimonio Fondo A'))
-    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_B'],yaxis="y2", name ='Patrimonio Fondo B',visible="legendonly"))
-    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_C'],yaxis="y2", name ='Patrimonio Fondo C'))
-    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_D'],yaxis="y2", name ='Patrimonio Fondo D',visible="legendonly"))
-    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_E'],yaxis="y2", name ='Patrimonio Fondo E'))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_A'], name ='Patrimonio Fondo A'))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_B'], name ='Patrimonio Fondo B',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_C'], name ='Patrimonio Fondo C'))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_D'], name ='Patrimonio Fondo D',visible="legendonly"))
+    fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_E'], name ='Patrimonio Fondo E'))
 
 
     #fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_A'], yaxis="y3", name ='Cambios de Fondo A',visible="legendonly"))
