@@ -5,7 +5,7 @@ import pandas as pd
 from api import query_by_daterange, fetch_last_update
 from datetime import date, timedelta, datetime, time
 
-start_date = date(2016,1,1)
+start_date = date(2017,1,1)
 
 today = date.today()
 
