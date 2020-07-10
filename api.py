@@ -675,7 +675,7 @@ base.metadata.create_all(database)
 #OPERCIONES QUE MODIFICAN LA BD
 
 #delete rows by date 
-def delete_by_date(fecha):
+def monthly_delete_by_date(fecha):
     #estos son mensuales
     input_rows = session.query(FORWARDS_NACIONALES).filter(FORWARDS_NACIONALES.Fecha == fecha).delete()
 
@@ -689,13 +689,16 @@ def delete_by_date(fecha):
     
     input_rows = session.query(EXTRANJEROS).filter(EXTRANJEROS.Fecha == fecha).delete()
     
-    #estos son diarios
-    input_rows = session.query(VALOR_FONDOS).filter(VALOR_FONDOS.Fecha >= fecha, VALOR_FONDOS.Fecha <= fecha + timedelta(days = 30)).delete()
-    
-    input_rows = session.query(Q_INDEX).filter(Q_INDEX.Fecha >= fecha, Q_INDEX.Fecha <= fecha + timedelta(days = 30)).delete()
+    session.commit()
 
-    input_rows = session.query(USDCLP).filter(USDCLP.Fecha >= fecha, USDCLP.Fecha <= fecha + timedelta(days = 30)).delete()
+def daily_delete_by_date(fecha):
+    #estos son diarios
+    input_rows = session.query(VALOR_FONDOS).filter(VALOR_FONDOS.Fecha == fecha).delete()
     
+    input_rows = session.query(Q_INDEX).filter(Q_INDEX.Fecha == fecha).delete()
+
+    #input_rows = session.query(USDCLP).filter(USDCLP.Fecha >= fecha, USDCLP.Fecha <= fecha + timedelta(days = 30)).delete()
+
     session.commit()
             
 def usdclp():
@@ -710,10 +713,10 @@ def upload_to_sql(start_date,end_date = None):
     if end_date == None:
         end_date = start_date
     #IMPORTANTE: CADA UPLOAD DE UN DÍA PRIMERO BOTA LO QUE YA ESTA, PARA NO DUPLICAR DATA ACCIDENTALMENTE
+    for fecha in rrule(DAILY, dtstart=start_date, until=end_date):
+        daily_delete_by_date(fecha)
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
-        delete_by_date(fecha)
-    for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
-        delete_by_date(last_day_of_month(fecha))
+        monthly_delete_by_date(last_day_of_month(fecha))
 
     df_fn = forward_nacional(start_date,end_date)
     df_total_activos,df_nacional,df_internacional = inversiones(start_date,end_date)

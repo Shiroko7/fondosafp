@@ -72,22 +72,36 @@ def fig_forwards_nacional(df,usdclp, df_vf, df_q):
     
     return fig
 
-def clp_to_usdp(row,usdclp,f):
+def clp_to_usd(df,usdclp):
     #print(usdclp.columns)
-    #print(row.columns)
-    fx = usdclp[usdclp['Fecha'] == row['Fecha']]['Precio'] 
-    if fx is not None and len(fx) != 0:
-        return row['VF_'+f] / fx.squeeze()
-    else:
-        return row['VF_'+f] / 820
+    #usdclp['Fecha'] = usdclp['Fecha'].str.slice(stop=10)
+    usdclp['Fecha'] = pd.to_datetime(usdclp['Fecha'])
+    df['Fecha'] = pd.to_datetime(df['Fecha'])
+
+    for i in range(len(df)): 
+        fx = usdclp[usdclp['Fecha'] == df.loc[i,'Fecha']]['Precio']    
+
+        if fx is not None and len(fx) > 0:
+            #print(df.loc[i,'VF_A'] )
+            #print(fx.squeeze())
+            df.loc[i,'VF_A'] = df.loc[i,'VF_A'] / fx.squeeze()
+            df.loc[i,'VF_B'] = df.loc[i,'VF_B'] / fx.squeeze()
+            df.loc[i,'VF_C'] = df.loc[i,'VF_C'] / fx.squeeze()
+            df.loc[i,'VF_D'] = df.loc[i,'VF_D'] / fx.squeeze()
+            df.loc[i,'VF_E'] = df.loc[i,'VF_E'] / fx.squeeze()
+        else:
+            df.loc[i,'VF_A'] = df.loc[i,'VF_A'] / 820
+            df.loc[i,'VF_B'] = df.loc[i,'VF_B'] / 820
+            df.loc[i,'VF_C'] = df.loc[i,'VF_C'] / 820
+            df.loc[i,'VF_D'] = df.loc[i,'VF_D'] / 820
+            df.loc[i,'VF_E'] = df.loc[i,'VF_E'] / 820
+    
+    return df
+
 
 def fig_afp(df_vf, usdclp):
     
-    df_vf['VF_A'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'A'),axis=1)
-    df_vf['VF_B'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'B'),axis=1)
-    df_vf['VF_C'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'C'),axis=1)
-    df_vf['VF_D'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'D'),axis=1)
-    df_vf['VF_E'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'E'),axis=1)
+    df_vf = clp_to_usd(df_vf,usdclp)
 
     fig = go.Figure()
 
@@ -143,11 +157,7 @@ def fig_forwards_nacional_afp(df, usdclp,df_vf, df_q):
     fig.add_trace(go.Scatter(x=usdclp['Fecha'],y=usdclp['Precio'], yaxis="y4", name='USD/CLP', marker_color='orange',visible="legendonly"))
 
     #fondos
-    df_vf['VF_A'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'A'),axis=1)
-    df_vf['VF_B'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'B'),axis=1)
-    df_vf['VF_C'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'C'),axis=1)
-    df_vf['VF_D'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'D'),axis=1)
-    df_vf['VF_E'] = df_vf.apply(lambda row: clp_to_usdp(row,usdclp,'E'),axis=1)
+    df_vf = clp_to_usd(df_vf,usdclp)
 
     fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_A'],yaxis="y2", name ='Patrimonio Fondo A',visible="legendonly"))
     fig.add_trace(go.Scatter(x=df_vf['Fecha'], y=df_vf['VF_B'],yaxis="y2", name ='Patrimonio Fondo B',visible="legendonly"))
