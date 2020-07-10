@@ -90,11 +90,28 @@ def clp_to_usd(df,usdclp):
             df.loc[i,'VF_D'] = df.loc[i,'VF_D'] / fx.squeeze()
             df.loc[i,'VF_E'] = df.loc[i,'VF_E'] / fx.squeeze()
         else:
-            df.loc[i,'VF_A'] = df.loc[i,'VF_A'] / 820
-            df.loc[i,'VF_B'] = df.loc[i,'VF_B'] / 820
-            df.loc[i,'VF_C'] = df.loc[i,'VF_C'] / 820
-            df.loc[i,'VF_D'] = df.loc[i,'VF_D'] / 820
-            df.loc[i,'VF_E'] = df.loc[i,'VF_E'] / 820
+            j = i - 1
+            flag = False
+            while (j > 0):
+                fx = usdclp[usdclp['Fecha'] == df.loc[j,'Fecha']]['Precio']
+                
+                if fx is not None and len(fx) > 0:
+                    df.loc[i,'VF_A'] = df.loc[i,'VF_A'] / fx.squeeze()
+                    df.loc[i,'VF_B'] = df.loc[i,'VF_B'] / fx.squeeze()
+                    df.loc[i,'VF_C'] = df.loc[i,'VF_C'] / fx.squeeze()
+                    df.loc[i,'VF_D'] = df.loc[i,'VF_D'] / fx.squeeze()
+                    df.loc[i,'VF_E'] = df.loc[i,'VF_E'] / fx.squeeze()
+                    flag = True
+                    j = -9
+                    break
+                j = j -1
+
+            if not flag:
+                df.loc[i,'VF_A'] = df.loc[i,'VF_A'] / 820
+                df.loc[i,'VF_B'] = df.loc[i,'VF_B'] / 820
+                df.loc[i,'VF_C'] = df.loc[i,'VF_C'] / 820
+                df.loc[i,'VF_D'] = df.loc[i,'VF_D'] / 820
+                df.loc[i,'VF_E'] = df.loc[i,'VF_E'] / 820
     
     return df
 
