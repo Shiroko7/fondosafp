@@ -192,14 +192,14 @@ def forward_nacional(start_date,end_date):
     return df
 
 def dif_forward_nacional(dfc,dfv,df):  
-    dfc.loc[:,('Fondo_A')] = dfc.loc[:,('Fondo_A')].abs()*-1
-    dfc.loc[:,('Fondo_B')] = dfc.loc[:,('Fondo_B')].abs()*-1
-    dfc.loc[:,('Fondo_C')] = dfc.loc[:,('Fondo_C')].abs()*-1
-    dfc.loc[:,('Fondo_D')] = dfc.loc[:,('Fondo_D')].abs()*-1
-    dfc.loc[:,('Fondo_E')] = dfc.loc[:,('Fondo_E')].abs()*-1
-    dfc.loc[:,('TOTAL')] = dfc.loc[:,('TOTAL')].astype('float64')*-1
+    dfc.loc[:,('Fondo_A')] = dfc['Fondo_A'].abs()*-1
+    dfc.loc[:,('Fondo_B')] = dfc['Fondo_B'].abs()*-1
+    dfc.loc[:,('Fondo_C')] = dfc['Fondo_C'].abs()*-1
+    dfc.loc[:,('Fondo_D')] = dfc['Fondo_D'].abs()*-1
+    dfc.loc[:,('Fondo_E')] = dfc['Fondo_E'].abs()*-1
+    dfc.loc[:,('TOTAL')] = dfc['TOTAL'].astype('float64').abs()*-1
     df = pd.concat([dfc, dfv]).groupby(['Fecha'], as_index=False).agg({'Fondo_A':'sum','Fondo_B':'sum','Fondo_C':'sum','Fondo_D':'sum','Fondo_E':'sum','TOTAL':'sum'})
-    df.loc[:,('Dif')] = df.loc[:,('TOTAL')].diff()
+    df.loc[:,('Dif')] = df['TOTAL'].diff()
     df.loc[:,('Giro')] = df['Dif'] > 0
     df.loc[:,('Giro')] = df['Giro'].apply(lambda x: 'V' if x > 0 else 'C')
     return df
