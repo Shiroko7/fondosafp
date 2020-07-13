@@ -12,30 +12,25 @@ from layout_home import layout_header,start_date,end_date
 
 #dataframes
 df_fn = query_by_daterange("forwards_nacionales",start_date,end_date).dropna()
-df_fn = df_fn.sort_values(by = 'Fecha')
-df_fn.reset_index(inplace=True,drop=True)
 dfc = df_fn[df_fn['Nombre'] == 'Compra']
 dfv = df_fn[df_fn['Nombre'] == 'Venta']
 
 df_vf = query_by_daterange("valor_fondos",start_date,end_date).dropna()
 df_vf = df_vf[(df_vf != 0).all(1)]
-df_vf = df_vf.sort_values(by = 'Fecha')
-df_vf.reset_index(inplace=True,drop=True)
 
 
 df_q = query_by_daterange("q_index",start_date,end_date).dropna()
 df_q = df_q[(df_q != 0).all(1)]
-df_q = df_q.sort_values(by = 'Fecha')
-df_q.reset_index(inplace=True,drop=True)
 
 usdclp = query_by_daterange("usdclp",start_date,end_date).dropna() 
 
 df_inter = query_by_daterange("inversion_internacional",start_date,end_date).dropna()
 
 #layout forwards nacionales
+#print(df_fn)
 fig_fn = plots.fig_forwards_nacional(dfc,dfv,df_fn,usdclp,df_vf,df_q)
 fig_afp = plots.fig_afp(df_vf,usdclp)
-
+#print(df_fn)
 fig_fn_afp = plots.fig_forwards_nacional_afp(dfc,dfv,df_fn,usdclp,df_vf,df_q)
 
 
