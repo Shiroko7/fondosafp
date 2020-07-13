@@ -191,10 +191,7 @@ def forward_nacional(start_date,end_date):
         
     return df
 
-def dif_forward_nacional(df):
-    dfc = df[df['Nombre'] == 'Compra']
-    dfv = df[df['Nombre'] == 'Venta']
-    
+def dif_forward_nacional(dfc,dfv,df):  
     dfc.loc[:,('Fondo_A')] = dfc.loc[:,('Fondo_A')].abs()*-1
     dfc.loc[:,('Fondo_B')] = dfc.loc[:,('Fondo_B')].abs()*-1
     dfc.loc[:,('Fondo_C')] = dfc.loc[:,('Fondo_C')].abs()*-1

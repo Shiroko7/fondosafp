@@ -11,7 +11,7 @@ from api import daily_delete_by_date, monthly_delete_by_date
 
 def auto_update():
     today = date.today()
-    start_date = today-timedelta(weeks=24)
+    start_date = today-timedelta(weeks=4)
     end_date = today
     #descargar mensuales
 
@@ -36,7 +36,7 @@ def auto_update():
 
 def kill():
     today = date.today()
-    start_date = today-timedelta(weeks=24)
+    start_date = today-timedelta(weeks=4)
     end_date = today
     for fecha in rrule(DAILY, dtstart=start_date, until=end_date):
         daily_delete_by_date(fecha)

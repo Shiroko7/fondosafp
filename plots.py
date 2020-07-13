@@ -7,11 +7,9 @@ from api import dif_forward_nacional
 
 # graficos
 
-def fig_forwards_nacional(df,usdclp, df_vf, df_q):
-    dfc = df[df['Nombre'] == 'Compra']
-    dfv = df[df['Nombre'] == 'Venta']
-    dif = dif_forward_nacional(df)
-    
+def fig_forwards_nacional(dfc,dfv,df,usdclp, df_vf, df_q):
+    dif = dif_forward_nacional(dfc,dfv,df)
+
     color=np.array(['rgb(255,255,255)']*dif['Dif'].shape[0])
     color[dif['Dif']<0]='red'
     color[dif['Dif']>=0]='green'
@@ -141,10 +139,8 @@ def fig_afp(df_vf, usdclp):
     
     return fig
 
-def fig_forwards_nacional_afp(df, usdclp,df_vf, df_q):
-    dfc = df[df['Nombre'] == 'Compra']
-    dfv = df[df['Nombre'] == 'Venta']
-    dif = dif_forward_nacional(df)
+def fig_forwards_nacional_afp(dfc,dfv,df, usdclp,df_vf, df_q):
+    dif = dif_forward_nacional(dfc,dfv,df)
     
     color=np.array(['rgb(255,255,255)']*dif['Dif'].shape[0])
     color[dif['Dif']<0]='red'
@@ -315,8 +311,8 @@ def fig_extranjeros(df):
     return fig
 
 
-def fig_hedge(df_inter,df_fn):
-    df_fn = dif_forward_nacional(df_fn)
+def fig_hedge(df_inter,dfc,dfv,df_fn):
+    df_fn = dif_forward_nacional(dfc,dfv,df_fn)
     fig = go.Figure()
     df_inter = df_inter[df_inter['Nombre'] == 'INVERSIÓN EXTRANJERA'].reset_index()
     fig.add_trace(go.Scatter(x=df_inter['Fecha'], y=df_fn['TOTAL']/df_inter['MMUSD_TOTAL']*100,name ='Total'))
