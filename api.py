@@ -11,7 +11,7 @@ import xlrd
 import os
 #Descargar de la web
 import urllib.request
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 import urllib.parse
 
 #Conexión base de datos
@@ -532,6 +532,28 @@ def vqfondos(start_date,end_date):
         
     return df
 
+### USD CLP FX
+def usdclp_hist():
+    usdclp_hist = pd.read_csv('USD_CLP Historical Data.csv',delimiter=',') 
+    usdclp_hist['Date'] = pd.to_datetime(usdclp_hist['Date'], format='%b %d, %Y')
+    usdclp_hist = usdclp_hist[['Date','Price']]
+    usdclp_hist.columns = ['Fecha', 'Precio']
+    return usdclp_hist
+
+
+def usdclp_last_month():
+    req = Request('https://www.investing.com/currencies/usd-clp-historical-data', headers={'User-Agent': 'Mozilla/5.0'})
+    html = urlopen(req).read()
+
+    usdclp = pd.read_html(html)[0]
+
+    usdclp['Date'] = pd.to_datetime(usdclp['Date'], format='%b %d, %Y')
+
+    usdclp = usdclp[['Date','Price']]
+    usdclp.columns = ['Fecha', 'Precio']
+    
+    return usdclp
+
 #conectarse a la base de datos
 #cambiar esto por un log in con input de usuario
 database = create_engine('postgres://pfjqxkqzdbefyh:9b90121091b9a7aaba720a1b848f7b707a82c8db9e374e1d7d3b16e96f6f6258@ec2-35-174-127-63.compute-1.amazonaws.com:5432/d3d9vrbrckuu50')  
@@ -694,47 +716,51 @@ def daily_delete_by_date(fecha):
     
     input_rows = session.query(Q_INDEX).filter(Q_INDEX.Fecha == fecha).delete()
 
-    #input_rows = session.query(USDCLP).filter(USDCLP.Fecha >= fecha, USDCLP.Fecha <= fecha + timedelta(days = 30)).delete()
-
     session.commit()
             
-def usdclp():
-    usdclp_hist = pd.read_csv('USD_CLP Historical Data.csv',delimiter=',') 
-    usdclp_hist['Date'] = pd.to_datetime(usdclp_hist['Date'], format='%b %d, %Y')
-    usdclp_hist = usdclp_hist[['Date','Price']]
-    usdclp_hist.columns = ['Fecha', 'Precio']
-    return usdclp_hist
+def delete_usdclp_dates(fecha):
+
+    input_rows = session.query(USDCLP).filter(USDCLP.Fecha <= fecha, USDCLP.Fecha >= fecha - timedelta(days = 20)).delete()
+    session.commit()
 
 #UPLOAD DATA
 def upload_to_sql(start_date,end_date = None):
     if end_date == None:
         end_date = start_date
+
+    # fetch data
+    df_fn = forward_nacional(start_date,end_date).dropna()
+
+    df_total_activos,df_nacional,df_internacional = inversiones(start_date,end_date)
+    df_total_activos.dropna(inplace=True)
+    df_nacional.dropna(inplace=True)
+    df_internacional.dropna(inplace=True)
+
+    df_activos = activos(start_date,end_date).dropna()
+    df_extranjeros = extranjeros(start_date,end_date).dropna()
+    df_vf = vcfondos(start_date,end_date).dropna()
+    df_q = vqfondos(start_date,end_date).dropna()
+    df_usdclp = usdclp_last_month().dropna()
+
     #IMPORTANTE: CADA UPLOAD DE UN DÍA PRIMERO BOTA LO QUE YA ESTA, PARA NO DUPLICAR DATA ACCIDENTALMENTE
     for fecha in rrule(DAILY, dtstart=start_date, until=end_date):
         daily_delete_by_date(fecha)
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
         monthly_delete_by_date(last_day_of_month(fecha))
-
-    df_fn = forward_nacional(start_date,end_date)
-    df_total_activos,df_nacional,df_internacional = inversiones(start_date,end_date)
-    df_activos = activos(start_date,end_date)
-    df_extranjeros = extranjeros(start_date,end_date)
-    df_vf = vcfondos(start_date,end_date)
-    df_q = vqfondos(start_date,end_date)
-    #df_usdclp = usdclp()
-#
-    #if not df_usdclp.empty: 
-    #    df_usdclp.to_sql("usdclp",
-    #                   database,
-    #                   if_exists='append',
-    #                   schema='public',
-    #                   index=False,
-    #                   chunksize=500,
-    #                   dtype={"Fecha": DateTime,
-    #                          "Precio": Float,}
-    #               )
-    #else:
-    #    print("Error inesparado: forwards nacionales")
+    delete_usdclp_dates(end_date)
+    
+    if not df_usdclp.empty: 
+        df_usdclp.to_sql("usdclp",
+                       database,
+                       if_exists='append',
+                       schema='public',
+                       index=False,
+                       chunksize=500,
+                       dtype={"Fecha": DateTime,
+                              "Precio": Float,}
+                   )
+    else:
+        print("Error inesparado: usdclp fx")
 
     if not df_fn.empty: 
         df_fn.to_sql("forwards_nacionales",

@@ -46,3 +46,10 @@ def kill():
 
 
 #auto_update()
+
+
+
+#from api import delete_usdclp_dates
+
+
+#delete_usdclp_dates(date.today())

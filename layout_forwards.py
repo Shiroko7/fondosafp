@@ -11,20 +11,21 @@ from layout_home import layout_header,start_date,end_date
 
 
 #dataframes
-df_fn = query_by_daterange("forwards_nacionales",start_date,end_date).dropna()
+df_fn = query_by_daterange("forwards_nacionales",start_date,end_date)
 dfc = df_fn[df_fn['Nombre'] == 'Compra']
 dfv = df_fn[df_fn['Nombre'] == 'Venta']
 
-df_vf = query_by_daterange("valor_fondos",start_date,end_date).dropna()
+df_vf = query_by_daterange("valor_fondos",start_date,end_date)
 df_vf = df_vf[(df_vf != 0).all(1)]
 
 
-df_q = query_by_daterange("q_index",start_date,end_date).dropna()
+df_q = query_by_daterange("q_index",start_date,end_date)
 df_q = df_q[(df_q != 0).all(1)]
 
-usdclp = query_by_daterange("usdclp",start_date,end_date).dropna() 
+usdclp = query_by_daterange("usdclp",start_date,end_date)
+usdclp.drop_duplicates(subset=['Fecha'],keep='first',inplace=True,ignore_index=True)
 
-df_inter = query_by_daterange("inversion_internacional",start_date,end_date).dropna()
+df_inter = query_by_daterange("inversion_internacional",start_date,end_date)
 
 #layout forwards nacionales
 #print(df_fn)

@@ -82,6 +82,7 @@ def clp_to_usd(df,usdclp):
         if fx is not None and len(fx) > 0:
             #print(df.loc[i,'VF_A'] )
             #print(fx.squeeze())
+            #print(df.loc[i,'Fecha'], ": ", df.loc[i,'VF_A'], "/", fx)
             df.loc[i,'VF_A'] = df.loc[i,'VF_A'] / fx.squeeze()
             df.loc[i,'VF_B'] = df.loc[i,'VF_B'] / fx.squeeze()
             df.loc[i,'VF_C'] = df.loc[i,'VF_C'] / fx.squeeze()
