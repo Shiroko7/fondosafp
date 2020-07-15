@@ -4,5 +4,6 @@ venv
 .env
 test.py
 worker.py
+update_tests.py
 *.csv
 *.aspx

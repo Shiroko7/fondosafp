@@ -718,9 +718,9 @@ def daily_delete_by_date(fecha):
 
     session.commit()
             
-def delete_usdclp_dates(fecha):
+def delete_usdclp_dates(start_date, end_date):
 
-    input_rows = session.query(USDCLP).filter(USDCLP.Fecha <= fecha, USDCLP.Fecha >= fecha - timedelta(days = 20)).delete()
+    input_rows = session.query(USDCLP).filter(USDCLP.Fecha >= start_date, USDCLP.Fecha <= end_date).delete()
     session.commit()
 
 #UPLOAD DATA
@@ -747,7 +747,7 @@ def upload_to_sql(start_date,end_date = None):
         daily_delete_by_date(fecha)
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
         monthly_delete_by_date(last_day_of_month(fecha))
-    delete_usdclp_dates(end_date)
+    delete_usdclp_dates(min(df_usdclp['Fecha']), end_date)
     
     if not df_usdclp.empty: 
         df_usdclp.to_sql("usdclp",
@@ -937,6 +937,32 @@ def upload_to_sql(start_date,end_date = None):
         
     session.commit()
     
+#UPLOAD DATA
+def experimental_usdclp_to_sql(start_date,end_date = None):
+    if end_date == None:
+        end_date = start_date
+
+    # fetch data
+   
+    df_usdclp = usdclp_hist()#usdclp_last_month().dropna()
+  
+    #delete_usdclp_dates(min(df_usdclp['Fecha']), end_date)
+    
+    if not df_usdclp.empty: 
+        df_usdclp.to_sql("usdclp",
+                       database,
+                       if_exists='append',
+                       schema='public',
+                       index=False,
+                       chunksize=500,
+                       dtype={"Fecha": DateTime,
+                              "Precio": Float,}
+                   )
+    else:
+        print("Error inesparado: usdclp fx")
+        
+    session.commit()
+
 #READ
 def query_by_daterange(label,start_date,end_date):
     #elegir tabla

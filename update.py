@@ -43,13 +43,3 @@ def kill():
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
         monthly_delete_by_date(last_day_of_month(fecha))
 #kill()
-
-
-#auto_update()
-
-
-
-#from api import delete_usdclp_dates
-
-
-#delete_usdclp_dates(date.today())
