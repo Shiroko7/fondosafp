@@ -433,7 +433,7 @@ def bar_inversion_nacional(df_nacio, fondo):
     fig.add_trace(go.Bar(x=fechas, y=y_otros, name='RF: Otros'))
     fig.add_trace(go.Bar(x=fechas, y=y_dp, name='RF: Depósitos a Plazo'))
     fig.add_trace(go.Bar(x=fechas, y=y_bb, name='RF: Bonos Bancarios'))
-    fig.add_trace(go.Bar(x=fechas, y=y_instr, name='RF: Instrumentos'))
+    fig.add_trace(go.Bar(x=fechas, y=y_instr, name='RF: Bonos Tesorería'))
     fig.add_trace(go.Bar(x=fechas, y=y_rv, name='Renta Variable'))
 
     fig.update_layout(yaxis={'title': '%Fondo'},
