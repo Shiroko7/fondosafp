@@ -6,35 +6,39 @@ import pandas as pd
 from api import query_by_daterange, fetch_last_update
 from datetime import date, timedelta, datetime, time
 
-from layout_home import layout_header,start_date,end_date
-
-
-#dataset
-df_activos = query_by_daterange("activos",start_date,end_date).dropna()
-
-#layout activos de pensiones
-fig_act_bclp = plots.fig_activos(df_activos,'Bonos CLP','porcentaje')
-fig_act_buf = plots.fig_activos(df_activos,'Bonos UF','porcentaje')
-fig_act_ex = plots.fig_activos(df_activos,'TOTAL EXTRANJERO','porcentaje')
-
+from layout_home import layout_header, start_date, end_date
 
 
 layout_activos = html.Div([
     layout_header,
     html.H3('Activos de Pensiones'),
     html.Div(
-        [            
-            dcc.Loading(id = "loading-icon_fig-act_bclp", children=[dcc.Graph(id='fig-act_bclp',figure = fig_act_bclp)],type="circle"),
+        [
+            html.P('Intervalo de fechas.'),
+            dcc.DatePickerRange(
+                id='daterange_activos',
+                first_day_of_week=1,
+                min_date_allowed=datetime(2016, 1, 1),
+                max_date_allowed=end_date,
+                initial_visible_month=end_date,
+                start_date=start_date,
+                end_date=end_date,
+                display_format='M-D-Y',
+            ),
+            dcc.Loading(id="loading-icon_fig-act_bclp",
+                        children=[dcc.Graph(id='fig_act_bclp')], type="circle"),
         ], className='pretty_container'
     ),
     html.Div(
-        [            
-            dcc.Loading(id = "loading-icon_fig-act_buf", children=[dcc.Graph(id='fig-act_buf',figure = fig_act_buf)],type="circle"),
+        [
+            dcc.Loading(id="loading-icon_fig-act_buf",
+                        children=[dcc.Graph(id='fig_act_buf')], type="circle"),
         ], className='pretty_container'
     ),
     html.Div(
-        [            
-            dcc.Loading(id = "loading-icon_fig-act_ex", children=[dcc.Graph(id='fig-act_ex',figure = fig_act_ex)],type="circle"),
+        [
+            dcc.Loading(id="loading-icon_fig-act_ex",
+                        children=[dcc.Graph(id='fig_act_ex')], type="circle"),
         ], className='pretty_container'
     ),
 ])

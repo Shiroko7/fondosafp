@@ -25,7 +25,8 @@ def fig_forwards_nacional(dfc, dfv, df, usdclp, df_vf, df_q):
     fig = go.Figure()
     # forwards
     fig.add_trace(go.Scatter(x=dif['Fecha'], y=dif['TOTAL'], yaxis="y",
-                             name='Pos Neta Fwd (Vendida)', marker_color='RoyalBlue'))
+                             name='Pos Neta Fwd (Vendida)', marker_color='RoyalBlue',))
+    # hovertemplate='$%{y:,.0f}' + '<br>%{x}</br>'))
 
     fig.add_trace(go.Bar(
         name='Cambio en Pos Neta Fwd',
@@ -79,8 +80,9 @@ def fig_forwards_nacional(dfc, dfv, df, usdclp, df_vf, df_q):
 def clp_to_usd(df, usdclp):
     # print(usdclp.columns)
     #usdclp['Fecha'] = usdclp['Fecha'].str.slice(stop=10)
+    df_new = df.copy()
     usdclp['Fecha'] = pd.to_datetime(usdclp['Fecha'])
-    df['Fecha'] = pd.to_datetime(df['Fecha'])
+    df_new['Fecha'] = pd.to_datetime(df_new['Fecha'])
 
     for i in range(len(df)):
         fx = usdclp[usdclp['Fecha'] == df.loc[i, 'Fecha']]['Precio']
@@ -89,11 +91,11 @@ def clp_to_usd(df, usdclp):
             #print(df.loc[i,'VF_A'] )
             # print(fx.squeeze())
             #print(df.loc[i,'Fecha'], ": ", df.loc[i,'VF_A'], "/", fx)
-            df.loc[i, 'VF_A'] = df.loc[i, 'VF_A'] / fx.squeeze()
-            df.loc[i, 'VF_B'] = df.loc[i, 'VF_B'] / fx.squeeze()
-            df.loc[i, 'VF_C'] = df.loc[i, 'VF_C'] / fx.squeeze()
-            df.loc[i, 'VF_D'] = df.loc[i, 'VF_D'] / fx.squeeze()
-            df.loc[i, 'VF_E'] = df.loc[i, 'VF_E'] / fx.squeeze()
+            df_new.loc[i, 'VF_A'] = df_new.loc[i, 'VF_A'] / fx.squeeze()
+            df_new.loc[i, 'VF_B'] = df_new.loc[i, 'VF_B'] / fx.squeeze()
+            df_new.loc[i, 'VF_C'] = df_new.loc[i, 'VF_C'] / fx.squeeze()
+            df_new.loc[i, 'VF_D'] = df_new.loc[i, 'VF_D'] / fx.squeeze()
+            df_new.loc[i, 'VF_E'] = df_new.loc[i, 'VF_E'] / fx.squeeze()
         else:
             j = i - 1
             flag = False
@@ -101,24 +103,29 @@ def clp_to_usd(df, usdclp):
                 fx = usdclp[usdclp['Fecha'] == df.loc[j, 'Fecha']]['Precio']
 
                 if fx is not None and len(fx) > 0:
-                    df.loc[i, 'VF_A'] = df.loc[i, 'VF_A'] / fx.squeeze()
-                    df.loc[i, 'VF_B'] = df.loc[i, 'VF_B'] / fx.squeeze()
-                    df.loc[i, 'VF_C'] = df.loc[i, 'VF_C'] / fx.squeeze()
-                    df.loc[i, 'VF_D'] = df.loc[i, 'VF_D'] / fx.squeeze()
-                    df.loc[i, 'VF_E'] = df.loc[i, 'VF_E'] / fx.squeeze()
+                    df_new.loc[i, 'VF_A'] = df_new.loc[i,
+                                                       'VF_A'] / fx.squeeze()
+                    df_new.loc[i, 'VF_B'] = df_new.loc[i,
+                                                       'VF_B'] / fx.squeeze()
+                    df_new.loc[i, 'VF_C'] = df_new.loc[i,
+                                                       'VF_C'] / fx.squeeze()
+                    df_new.loc[i, 'VF_D'] = df_new.loc[i,
+                                                       'VF_D'] / fx.squeeze()
+                    df_new.loc[i, 'VF_E'] = df_new.loc[i,
+                                                       'VF_E'] / fx.squeeze()
                     flag = True
                     j = -9
                     break
                 j = j - 1
 
             if not flag:
-                df.loc[i, 'VF_A'] = df.loc[i, 'VF_A'] / 820
-                df.loc[i, 'VF_B'] = df.loc[i, 'VF_B'] / 820
-                df.loc[i, 'VF_C'] = df.loc[i, 'VF_C'] / 820
-                df.loc[i, 'VF_D'] = df.loc[i, 'VF_D'] / 820
-                df.loc[i, 'VF_E'] = df.loc[i, 'VF_E'] / 820
+                df_new.loc[i, 'VF_A'] = df_new.loc[i, 'VF_A'] / 820
+                df_new.loc[i, 'VF_B'] = df_new.loc[i, 'VF_B'] / 820
+                df_new.loc[i, 'VF_C'] = df_new.loc[i, 'VF_C'] / 820
+                df_new.loc[i, 'VF_D'] = df_new.loc[i, 'VF_D'] / 820
+                df_new.loc[i, 'VF_E'] = df_new.loc[i, 'VF_E'] / 820
 
-    return df
+    return df_new
 
 
 def fig_afp(df_vf, usdclp):

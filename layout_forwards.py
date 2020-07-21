@@ -7,63 +7,50 @@ import pandas as pd
 from api import query_by_daterange, fetch_last_update
 from datetime import date, timedelta, datetime, time
 
-from layout_home import layout_header,start_date,end_date
+from layout_home import layout_header, start_date, end_date
 
-
-#dataframes
-df_fn = query_by_daterange("forwards_nacionales",start_date,end_date)
-dfc = df_fn[df_fn['Nombre'] == 'Compra']
-dfv = df_fn[df_fn['Nombre'] == 'Venta']
-
-df_vf = query_by_daterange("valor_fondos",start_date,end_date)
-df_vf = df_vf[(df_vf != 0).all(1)]
-
-
-df_q = query_by_daterange("q_index",start_date,end_date)
-df_q = df_q[(df_q != 0).all(1)]
-
-usdclp = query_by_daterange("usdclp",start_date,end_date)
-usdclp.drop_duplicates(subset=['Fecha'],keep='first',inplace=True,ignore_index=True)
-
-df_inter = query_by_daterange("inversion_internacional",start_date,end_date)
-
-#layout forwards nacionales
-#print(df_fn)
-fig_fn = plots.fig_forwards_nacional(dfc,dfv,df_fn,usdclp,df_vf,df_q)
-fig_afp = plots.fig_afp(df_vf,usdclp)
-#print(df_fn)
-fig_fn_afp = plots.fig_forwards_nacional_afp(dfc,dfv,df_fn,usdclp,df_vf,df_q)
-
-
-fig_inter_hedge = plots.fig_hedge(df_inter,dfc,dfv,df_fn)
 
 layout_datos = html.Div([
     layout_header,
     html.H3('Forwards Nacionales'),
     html.Div(
         [
-            dcc.Loading(id = "loading-icon_fn", children=[dcc.Graph(id='fig_fn',figure = fig_fn)],type="circle"),
+            html.P('Intervalo de fechas.'),
+            dcc.DatePickerRange(
+                id='daterange_forwards',
+                first_day_of_week=1,
+                min_date_allowed=datetime(2016, 1, 1),
+                max_date_allowed=end_date,
+                initial_visible_month=end_date,
+                start_date=start_date,
+                end_date=end_date,
+                display_format='M-D-Y',
+            ),
+            dcc.Loading(id="loading-icon_fn",
+                        children=[dcc.Graph(id='fig_fn')], type="circle"),
         ], className='pretty_container'
     ),
-
     html.Div(
         [
-            dcc.Loading(id = "loading-icon_fig-inter_hedge", children=[dcc.Graph(id='fig-inter_hedge',figure = fig_inter_hedge)],type="circle"),
+            dcc.Loading(id="loading-icon_fig_inter_hedge", children=[dcc.Graph(
+                id='fig_inter_hedge')], type="circle"),
         ], className='pretty_container'
     ),
 
     html.H3('Fondos AFP'),
     html.Div(
         [
-            dcc.Loading(id = "loading-icon_afp", children=[dcc.Graph(id='fig_afp',figure = fig_afp)],type="circle"),
+            dcc.Loading(id="loading-icon_afp",
+                        children=[dcc.Graph(id='fig_afp')], type="circle"),
         ], className='pretty_container'
     ),
 
     html.H3('Forwards Nacionales + Fondos AFP'),
     html.Div(
         [
-            dcc.Loading(id = "loading-icon_fn-afp", children=[dcc.Graph(id='fig_fn_afp',figure = fig_fn_afp)],type="circle"),
+            dcc.Loading(id="loading-icon_fn-afp",
+                        children=[dcc.Graph(id='fig_fn_afp')], type="circle"),
         ], className='pretty_container'
     ),
-    
+
 ])
