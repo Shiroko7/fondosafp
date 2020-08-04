@@ -37,7 +37,7 @@ def update_fig_fn(start_date, end_date):
     # FIGURES
     fig_fn = plots.fig_forwards_nacional(dfc, dfv, df_fn, usdclp, df_vf, df_q)
 
-    fig_inter_hedge = plots.fig_hedge(df_inter, dfc, dfv, df_fn)
+    fig_inter_hedge = plots.fig_hedge(df_inter, dfc, dfv, df_fn, usdclp)
 
     fig_afp = plots.fig_afp(df_vf, usdclp)
 

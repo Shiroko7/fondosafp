@@ -12,14 +12,13 @@ app.layout = html.Div([
     html.Div(id='page-content')
 ])
 
+
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
-
-
 def display_page(pathname):
     if pathname == '/':
-        from layout_home import layout_home
-        return layout_home
+        from layout_home import layout_home_head
+        return layout_home_head
 
     elif pathname == '/apps/forwards-nacionales':
         from layout_forwards import layout_datos
@@ -32,7 +31,7 @@ def display_page(pathname):
     elif pathname == '/apps/inversiones':
         from layout_inversiones import layout_inversiones
         return layout_inversiones
-    
+
     elif pathname == '/apps/inversion-internacional':
         from layout_internacional import layout_internacional
         return layout_internacional
@@ -44,10 +43,11 @@ def display_page(pathname):
     elif pathname == '/apps/extranjeros':
         from layout_extranjeros import layout_extranjeros
         return layout_extranjeros
-    #elif pathname == '/apps/valores':
+    # elif pathname == '/apps/valores':
     #    return layout_afp
     else:
         return '404'
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
