@@ -1,13 +1,13 @@
 # Fondos AFP
 
-## Requirementes
+## Requirements
 
 - Python 3
 
 ## Installation
 
 ```python
-pip3 install -r requirementes.txt
+pip3 install -r requirements.txt
 ```
 
 ## Run
