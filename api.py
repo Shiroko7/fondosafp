@@ -119,7 +119,12 @@ def download_extranjeros(fecha):
 def mult_dl(downloader, start_date, end_date):
     if start_date == None or end_date == None:
         return
-    for d in rrule(MONTHLY, dtstart=start_date, until=end_date):
+    months = list(rrule(MONTHLY, dtstart=start_date, until=end_date))
+    if (end_date.day < 11):
+        months = months[:-1]
+    elif(end_date.month == months[-1].month):
+        months = months[:-1]
+    for d in months:
         downloader(d)
 
 
@@ -256,6 +261,7 @@ def inversiones(start_date, end_date):
 
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
         fecha_x = "".join(str(fecha)[0:7].split("-"))
+        # print(fecha_x)
         token = "afp_inversiones_{0}.aspx".format(fecha_x)
         # leer archivo como string
         file = open(token, 'r', encoding='utf-8')
@@ -337,6 +343,7 @@ def inversiones(start_date, end_date):
         df_inter = df_inter.append(inter_rf, ignore_index=True, sort=False)
         file.close()
 
+    # print(df_total_activos)
     df_total_activos = df_total_activos[cols_f]
     df_nac = df_nac[cols_f]
     df_inter = df_inter[cols_f]
@@ -519,21 +526,21 @@ def vcfondos(start_date, end_date):
             'VF_E': 0.0,
         }
         for f in fondos:
-            token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
-            # try:
-            # leer archivo como string
-            file = open(token, 'r')
-            data = file.read()
             try:
+                token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
+                # try:
+                # leer archivo como string
+                file = open(token, 'r')
+                data = file.read()
                 vf = pd.read_html(data, thousands='.', decimal=',')[3]
                 vf.columns = vf.columns.droplevel()
 
                 row['VF_'+f] = float(vf[vf['A.F.P.'] == 'TOTAL']
                                      ['Valor del Patrimonio'].squeeze())
+                file.close()
+
             except:
                 pass
-
-            file.close()
 
         df_i = pd.DataFrame(row, columns=cols, index=[0])
         df = df.append(df_i, ignore_index=True, sort=False)
@@ -556,12 +563,12 @@ def vqfondos(start_date, end_date):
             'Q_E': 0.0,
         }
         for f in fondos:
-            token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
-            # try:
-            # leer archivo como string
-            file = open(token, 'r')
-            data = file.read()
             try:
+                token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
+                # try:
+                # leer archivo como string
+                file = open(token, 'r')
+                data = file.read()
                 vf = pd.read_html(data, thousands='.', decimal=',')[3]
                 vf.columns = vf.columns.droplevel()
                 for afp in vf['A.F.P.']:
@@ -798,7 +805,7 @@ def delete_usdclp_dates(start_date, end_date):
 # UPLOAD DATA
 
 
-def upload_to_sql(start_date, end_date=None):
+def upload_to_sql_monthly(start_date, end_date=None):
     if end_date == None:
         end_date = start_date
 
@@ -813,29 +820,10 @@ def upload_to_sql(start_date, end_date=None):
 
     df_activos = activos(start_date, end_date).dropna()
     df_extranjeros = extranjeros(start_date, end_date).dropna()
-    df_vf = vcfondos(start_date, end_date).dropna()
-    df_q = vqfondos(start_date, end_date).dropna()
-    df_usdclp = usdclp_last_month().dropna()
 
     # IMPORTANTE: CADA UPLOAD DE UN DÍA PRIMERO BOTA LO QUE YA ESTA, PARA NO DUPLICAR DATA ACCIDENTALMENTE
-    for fecha in rrule(DAILY, dtstart=start_date, until=end_date):
-        daily_delete_by_date(fecha)
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
         monthly_delete_by_date(last_day_of_month(fecha))
-    delete_usdclp_dates(min(df_usdclp['Fecha']), end_date)
-
-    if not df_usdclp.empty:
-        df_usdclp.to_sql("usdclp",
-                         database,
-                         if_exists='append',
-                         schema='public',
-                         index=False,
-                         chunksize=500,
-                         dtype={"Fecha": DateTime,
-                                "Precio": Float, }
-                         )
-    else:
-        print("Error inesparado: usdclp fx")
 
     if not df_fn.empty:
         df_fn.to_sql("forwards_nacionales",
@@ -974,6 +962,36 @@ def upload_to_sql(start_date, end_date=None):
     else:
         print("Error inesparado: extranjeros")
 
+    session.commit()
+
+
+def upload_to_sql_daily(start_date, end_date=None):
+    if end_date == None:
+        end_date = start_date
+
+    # fetch data
+    df_vf = vcfondos(start_date, end_date).dropna()
+    df_q = vqfondos(start_date, end_date).dropna()
+    df_usdclp = usdclp_last_month().dropna()
+
+    # IMPORTANTE: CADA UPLOAD DE UN DÍA PRIMERO BOTA LO QUE YA ESTA, PARA NO DUPLICAR DATA ACCIDENTALMENTE
+    for fecha in rrule(DAILY, dtstart=start_date, until=end_date):
+        daily_delete_by_date(fecha)
+    delete_usdclp_dates(min(df_usdclp['Fecha']), end_date)
+
+    if not df_usdclp.empty:
+        df_usdclp.to_sql("usdclp",
+                         database,
+                         if_exists='append',
+                         schema='public',
+                         index=False,
+                         chunksize=500,
+                         dtype={"Fecha": DateTime,
+                                "Precio": Float, }
+                         )
+    else:
+        print("Error inesparado: usdclp fx")
+
     if not df_vf.empty:
         df_vf.to_sql("valor_fondos",
                      database,
@@ -1011,35 +1029,6 @@ def upload_to_sql(start_date, end_date=None):
         print("Error inesparado: q index")
 
     session.commit()
-
-# UPLOAD DATA
-
-
-def experimental_usdclp_to_sql(start_date, end_date=None):
-    if end_date == None:
-        end_date = start_date
-
-    # fetch data
-
-    df_usdclp = usdclp_hist()  # usdclp_last_month().dropna()
-
-    #delete_usdclp_dates(min(df_usdclp['Fecha']), end_date)
-
-    if not df_usdclp.empty:
-        df_usdclp.to_sql("usdclp",
-                         database,
-                         if_exists='append',
-                         schema='public',
-                         index=False,
-                         chunksize=500,
-                         dtype={"Fecha": DateTime,
-                                "Precio": Float, }
-                         )
-    else:
-        print("Error inesparado: usdclp fx")
-
-    session.commit()
-
 # READ
 
 
