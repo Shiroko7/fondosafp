@@ -6,7 +6,7 @@ import pandas as pd
 from api import query_by_daterange, fetch_last_update
 from datetime import date, timedelta, datetime, time
 
-from layout_home import layout_header, start_date, end_date
+from layouts.layout_home import layout_header, start_date, end_date
 
 
 layout_activos = html.Div([

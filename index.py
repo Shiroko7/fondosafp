@@ -17,31 +17,31 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/':
-        from layout_home import layout_home_head
+        from layouts.layout_home import layout_home_head
         return layout_home_head
 
     elif pathname == '/apps/forwards-nacionales':
-        from layout_forwards import layout_datos
+        from layouts.layout_forwards import layout_datos
         return layout_datos
 
     elif pathname == '/apps/inversion-nacional':
-        from layout_nacional import layout_nacional
+        from layouts.layout_nacional import layout_nacional
         return layout_nacional
 
     elif pathname == '/apps/inversiones':
-        from layout_inversiones import layout_inversiones
+        from layouts.layout_inversiones import layout_inversiones
         return layout_inversiones
 
     elif pathname == '/apps/inversion-internacional':
-        from layout_internacional import layout_internacional
+        from layouts.layout_internacional import layout_internacional
         return layout_internacional
 
     elif pathname == '/apps/activos':
-        from layout_activos import layout_activos
+        from layouts.layout_activos import layout_activos
         return layout_activos
 
     elif pathname == '/apps/extranjeros':
-        from layout_extranjeros import layout_extranjeros
+        from layouts.layout_extranjeros import layout_extranjeros
         return layout_extranjeros
     # elif pathname == '/apps/valores':
     #    return layout_afp
@@ -50,4 +50,4 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)

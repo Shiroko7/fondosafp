@@ -5,9 +5,9 @@ import pandas as pd
 from api import query_by_daterange, fetch_last_update
 from datetime import date, timedelta, datetime, time
 
-start_date = date(2017, 1, 1)
-today = date.today()
 
+today = date.today()
+start_date = today - timedelta(days=2*395)
 # last update info
 confirmado, disponible = fetch_last_update(today)
 end_date = pd.to_datetime(disponible, format="%d-%b-%Y")
