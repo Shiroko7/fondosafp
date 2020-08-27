@@ -33,6 +33,8 @@ links = html.Div(
         html.Ul(
             [
                 html.Li(
+                    [dcc.Link('Resumen de Carteras', href='/apps/resumen'), ]),
+                html.Li(
                     [dcc.Link('Forward Nacionales', href='/apps/forwards-nacionales'), ]),
                 html.Li([dcc.Link('Inversiones', href='/apps/inversiones'), ]),
                 html.Li(
@@ -40,7 +42,6 @@ links = html.Div(
                 html.Li([dcc.Link('Inversión Internacional',
                                   href='/apps/inversion-internacional'), ]),
                 html.Li([dcc.Link('Activos de Pensiones', href='/apps/activos'), ]),
-                #html.Li([dcc.Link('Valores Fondos', href='/apps/valores'),]),
                 html.Li(
                     [dcc.Link('Inversión en Regiones', href='/apps/extranjeros'), ]),
             ]

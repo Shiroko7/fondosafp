@@ -514,35 +514,34 @@ def fig_hedge(df_inter, dfc, dfv, df_fn, usdclp, resumen=False):
     if not resumen:
         fig.add_trace(go.Scatter(x=usdclp['Fecha'], y=usdclp['Precio'], yaxis="y2",
                                  name='USD/CLP', marker_color='orange', visible="legendonly", hovertemplate='%{x}, %{y:.1f}'))
-
-    # Create axis objects
-    fig.update_layout(
-        xaxis=dict(
-            domain=[0.1, 1]
-        ),
-        yaxis=dict(
-            title="%Fondo",
-            titlefont=dict(
-                color="RoyalBlue"
+        # Create axis objects
+        fig.update_layout(
+            xaxis=dict(
+                domain=[0.1, 1]
             ),
-            tickfont=dict(
-                color="RoyalBlue"
+            yaxis=dict(
+                title="%Fondo",
+                titlefont=dict(
+                    color="RoyalBlue"
+                ),
+                tickfont=dict(
+                    color="RoyalBlue"
+                ),
+                position=0
             ),
-            position=0
-        ),
-        yaxis2=dict(
-            title="CLP",
-            titlefont=dict(
-                color="orange"
+            yaxis2=dict(
+                title="CLP",
+                titlefont=dict(
+                    color="orange"
+                ),
+                tickfont=dict(
+                    color="orange"
+                ),
+                anchor="x",
+                overlaying="y",
+                position=0.1
             ),
-            tickfont=dict(
-                color="orange"
-            ),
-            anchor="x",
-            overlaying="y",
-            position=0.1
-        ),
-    )
+        )
 
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Porcentaje Inversión Extranjera Hedge')
@@ -563,35 +562,34 @@ def fig_hedge_total(df_inter, dfc, dfv, df_fn, usdclp, resumen=False):
     if not resumen:
         fig.add_trace(go.Scatter(x=usdclp['Fecha'], y=usdclp['Precio'], yaxis="y2",
                                  name='USD/CLP', marker_color='orange', visible="legendonly", hovertemplate='%{x}, %{y:.1f}'))
-
-    # Create axis objects
-    fig.update_layout(
-        xaxis=dict(
-            domain=[0.1, 1]
-        ),
-        yaxis=dict(
-            title="%Fondo",
-            titlefont=dict(
-                color="RoyalBlue"
+        # Create axis objects
+        fig.update_layout(
+            xaxis=dict(
+                domain=[0.1, 1]
             ),
-            tickfont=dict(
-                color="RoyalBlue"
+            yaxis=dict(
+                title="%Fondo",
+                titlefont=dict(
+                    color="RoyalBlue"
+                ),
+                tickfont=dict(
+                    color="RoyalBlue"
+                ),
+                position=0
             ),
-            position=0
-        ),
-        yaxis2=dict(
-            title="CLP",
-            titlefont=dict(
-                color="orange"
+            yaxis2=dict(
+                title="CLP",
+                titlefont=dict(
+                    color="orange"
+                ),
+                tickfont=dict(
+                    color="orange"
+                ),
+                anchor="x",
+                overlaying="y",
+                position=0.1
             ),
-            tickfont=dict(
-                color="orange"
-            ),
-            anchor="x",
-            overlaying="y",
-            position=0.1
-        ),
-    )
+        )
 
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Porcentaje Inversión Extranjera Hedge')
