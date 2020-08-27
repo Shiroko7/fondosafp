@@ -28,14 +28,6 @@ def fig_forwards_nacional(dfc, dfv, df, usdclp, resumen=False):
                              name='Pos Neta Fwd (Vendida)', marker_color='RoyalBlue', hovertemplate='%{x}, %{y:.1f}'))
     # hovertemplate='$%{y:,.0f}' + '<br>%{x}</br>'))
 
-    fig.add_trace(go.Bar(
-        name='Cambio en Pos Neta Fwd',
-        x=dif['Fecha'],
-        y=dif['Dif'].abs(),
-        marker=dict(color=color.tolist()),
-        hovertext=hover
-    ))
-
     if resumen:
         fig.add_trace(go.Scatter(x=dfc['Fecha'], y=dfc['TOTAL'].abs(
         ), yaxis="y", name='Pos Comprada Fwd', marker_color='red', hovertemplate='%{x}, %{y:.1f}'))
@@ -46,6 +38,14 @@ def fig_forwards_nacional(dfc, dfv, df, usdclp, resumen=False):
                                  name='Pos Vendida Fwd', marker_color='green', visible="legendonly", hovertemplate='%{x}, %{y:.1f}'))
         fig.add_trace(go.Scatter(x=usdclp['Fecha'], y=usdclp['Precio'], yaxis="y2",
                                  name='USD/CLP', marker_color='orange', visible="legendonly", hovertemplate='%{x}, %{y:.1f}'))
+
+    fig.add_trace(go.Bar(
+        name='Cambio en Pos Neta Fwd',
+        x=dif['Fecha'],
+        y=dif['Dif'].abs(),
+        marker=dict(color=color.tolist()),
+        hovertext=hover
+    ))
 
     # Create axis objects
     if not resumen:
@@ -102,7 +102,7 @@ def fig_forwards_nacional(dfc, dfv, df, usdclp, resumen=False):
         )
 
     fig.update_layout(title='Venta neta FWD USDCLP')
-
+    fig.update_layout(legend={'itemsizing': 'constant'})
     return fig
 
 
@@ -572,7 +572,8 @@ def fig_extranjeros(df):
 
 
 def fig_hedge(df_inter, dfc, dfv, df_fn, usdclp, resumen=False):
-    df_fn = dif_forward_nacional(dfc, dfv, df_fn)
+    df_fn = dif_forward_nacional(dfc, dfv, df_fn).reset_index()
+
     fig = go.Figure()
 
     df_inter = df_inter[df_inter['Nombre'] ==
@@ -648,7 +649,7 @@ def fig_hedge(df_inter, dfc, dfv, df_fn, usdclp, resumen=False):
 
 
 def fig_hedge_total(df_inter, dfc, dfv, df_fn, usdclp, resumen=False):
-    df_fn = dif_forward_nacional(dfc, dfv, df_fn)
+    df_fn = dif_forward_nacional(dfc, dfv, df_fn).reset_index()
     fig = go.Figure()
 
     df_inter = df_inter[df_inter['Nombre'] ==
@@ -695,25 +696,19 @@ def fig_hedge_total(df_inter, dfc, dfv, df_fn, usdclp, resumen=False):
         fig.update_layout(
             xaxis=dict(domain=[0, 0.985]),
             yaxis=dict(
-                dtick=5,
-                range=[max(0, min(y_p)-5), min(100, max(y_p)+5)],
-                tickmode='array',
-                tickvals=[i*10 for i in range(11)],
+                range=[max(0, min(y_p)-2), min(100, max(y_p)+2)],
             ),
             yaxis2=dict(
-                dtick=5,
-                range=[max(0, min(y_p)-5), min(100, max(y_p)+5)],
+                range=[max(0, min(y_p)-2), min(100, max(y_p)+2)],
                 position=0.985,
                 anchor="x",
                 overlaying="y",
                 side="right",
-                tickmode='array',
-                tickvals=[i*10 for i in range(11)],
             )
         )
 
     fig.update_layout(yaxis={'title': '%Fondo'},
-                      title='Porcentaje Inversión Extranjera Hedge')
+                      title='Porcentaje Inversión Extranjera Hedge TOTAL')
 
     return fig
 
@@ -831,7 +826,7 @@ def bar_inversion_nacional(df_nacio, fondo):
 def bar_inversion_nacional_monedas(df_bonos_clp, df_bonos_uf, fondo):
     fig = go.Figure()
     fechas = pd.to_datetime(df_bonos_clp.Fecha.unique())
-
+    df_bonos_clp['Porcentaje_'+fondo]
     fig.add_trace(go.Bar(
         x=fechas, y=df_bonos_clp['Porcentaje_'+fondo], name='Bonos CLP', hovertemplate='%{x}, %{y:.1f}'))
     fig.add_trace(go.Bar(
@@ -860,27 +855,33 @@ def bar_inversion_nacional_monedas(df_bonos_clp, df_bonos_uf, fondo):
                              str(int(promedio_clp))+'%',
                              mode='markers',
                              marker=dict(color=['black']),
-                             hovertemplate='%{x}, %{y:.1f}',
-                             showlegend=True,))
+                             hovertemplate='%{x}, %{y:.1f}'))
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Inversión Nacional Bonos ' + fondo)
     fig.add_trace(go.Scatter(
         x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
+
+    top = max(df_bonos_clp['Porcentaje_'+fondo] +
+              df_bonos_clp['Porcentaje_'+fondo]) + 10
+
+    if top > 50:
+        step = 10
+    else:
+        step = 5
+
     fig.update_layout(
         xaxis=dict(domain=[0, 0.985]),
         yaxis=dict(
-            range=[0, 100],
-            tickmode='array',
-            tickvals=[i*10 for i in range(11)],
+            range=[0, min(100, top)],
+            dtick=step
         ),
         yaxis2=dict(
-            range=[0, 100],
+            range=[0, min(100, top)],
             position=0.985,
             anchor="x",
             overlaying="y",
             side="right",
-            tickmode='array',
-            tickvals=[i*10 for i in range(11)],
+            dtick=step
         )
     )
     fig.update_layout(barmode='stack')
@@ -929,8 +930,7 @@ def bar_inversion_internacional(df_inter, fondo):
                              str(int(promedio_rv))+'%',
                              mode='markers',
                              marker=dict(color=['black']),
-                             hovertemplate='%{x}, %{y:.1f}',
-                             showlegend=True,))
+                             hovertemplate='%{x}, %{y:.1f}'))
 
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Inversión Internacional ' + fondo)
@@ -999,8 +999,7 @@ def bar_inversion(df_nacio, df_inter, fondo):
                              str(int(promedio_nacional))+'%',
                              mode='markers',
                              marker=dict(color=['black']),
-                             hovertemplate='%{x}, %{y:.1f}',
-                             showlegend=True,))
+                             hovertemplate='%{x}, %{y:.1f}'))
 
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Inversión ' + fondo)

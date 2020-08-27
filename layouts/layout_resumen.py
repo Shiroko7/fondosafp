@@ -5,8 +5,8 @@ import pandas as pd
 from api import query_by_daterange, fetch_last_update
 from datetime import date, timedelta, datetime, time
 
-end_date = date.today() - timedelta(date.today().day)
-start_date = end_date - timedelta(days=2*395)
+end_date = date.today()  # - timedelta(date.today().day)
+start_date = end_date - timedelta(days=2*365)
 
 # dataframes
 df_vf = query_by_daterange("valor_fondos", start_date, end_date)

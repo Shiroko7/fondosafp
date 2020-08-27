@@ -7,7 +7,7 @@ from datetime import date, timedelta, datetime, time
 
 
 today = date.today()
-start_date = today - timedelta(days=2*395)
+start_date = today - timedelta(days=2*365)
 # last update info
 confirmado, disponible = fetch_last_update(today)
 end_date = pd.to_datetime(disponible, format="%d-%b-%Y")
