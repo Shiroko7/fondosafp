@@ -32,6 +32,12 @@ layout_datos = html.Div([
     ),
     html.Div(
         [
+            dcc.Loading(id="loading-icon_fig_inter_hedge_total", children=[dcc.Graph(
+                id='fig_inter_hedge_total')], type="circle"),
+        ], className='pretty_container'
+    ),
+    html.Div(
+        [
             dcc.Loading(id="loading-icon_fig_inter_hedge", children=[dcc.Graph(
                 id='fig_inter_hedge')], type="circle"),
         ], className='pretty_container'

@@ -196,14 +196,15 @@ def forward_nacional(start_date, end_date):
             'Fondo_C', 'Fondo_D', 'Fondo_E', 'TOTAL']
     df = pd.DataFrame(columns=cols)
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
-        fecha_x = "".join(str(fecha)[0:7].split("-"))
-        token = "afp_fw_nacional_{0}.aspx".format(fecha_x)
-        # try:
-        # leer archivo como string
-        file = open(token, 'r', encoding='utf-8')
-        data = file.read()
-        # buscar tabla dólar
         try:
+            fecha_x = "".join(str(fecha)[0:7].split("-"))
+            token = "afp_fw_nacional_{0}.aspx".format(fecha_x)
+            # try:
+            # leer archivo como string
+            file = open(token, 'r', encoding='utf-8')
+            data = file.read()
+            # buscar tabla dólar
+
             df_i = pd.read_html(data, header=0, thousands='.', decimal=',')[0]
         except:
             continue
@@ -260,14 +261,14 @@ def inversiones(start_date, end_date):
     df_total_activos = pd.DataFrame(columns=cols)
 
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
-        fecha_x = "".join(str(fecha)[0:7].split("-"))
-        # print(fecha_x)
-        token = "afp_inversiones_{0}.aspx".format(fecha_x)
-        # leer archivo como string
-        file = open(token, 'r', encoding='utf-8')
-        data = file.read()
-        # buscar tabla
         try:
+            fecha_x = "".join(str(fecha)[0:7].split("-"))
+            # print(fecha_x)
+            token = "afp_inversiones_{0}.aspx".format(fecha_x)
+            # leer archivo como string
+            file = open(token, 'r', encoding='utf-8')
+            data = file.read()
+            # buscar tabla
             df = pd.read_html(data, header=1, thousands='.', decimal=',')[0]
         except:
             continue
@@ -359,13 +360,13 @@ def activos(start_date, end_date):
     df = pd.DataFrame(columns=cols)
 
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
-        fecha_x = "".join(str(fecha)[0:7].split("-"))
-        token = "afp_activos_{0}.aspx".format(fecha_x)
-        # leer archivo como string
-        file = open(token, 'r', encoding='utf-8')
-        data = file.read()
-        # buscar tabla
         try:
+            fecha_x = "".join(str(fecha)[0:7].split("-"))
+            token = "afp_activos_{0}.aspx".format(fecha_x)
+            # leer archivo como string
+            file = open(token, 'r', encoding='utf-8')
+            data = file.read()
+            # buscar tabla
             df_i = pd.read_html(data, header=1, thousands='.', decimal=',')[0]
         except:
             continue
@@ -428,13 +429,13 @@ def extranjeros(start_date, end_date):
     df_total_ext = pd.DataFrame(columns=cols)
 
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
-        fecha_x = "".join(str(fecha)[0:7].split("-"))
-        token = "afp_extranjeros_{0}.aspx".format(fecha_x)
-        # leer archivo como string
-        file = open(token, 'r', encoding='utf-8')
-        data = file.read()
-        # buscar tabla
         try:
+            fecha_x = "".join(str(fecha)[0:7].split("-"))
+            token = "afp_extranjeros_{0}.aspx".format(fecha_x)
+            # leer archivo como string
+            file = open(token, 'r', encoding='utf-8')
+            data = file.read()
+            # buscar tabla
             df = pd.read_html(data, header=1, thousands='.', decimal=',')[0]
         except:
             continue
@@ -512,56 +513,20 @@ def Q_index_historic(start_date, end_date):
 
 # DIA A DIA (CASI)
 def vcfondos(start_date, end_date):
-    cols = ['Fecha', 'VF_A', 'VF_B', 'VF_C', 'VF_D', 'VF_E']
+    cols = ['Fecha', 'AFP', 'VF_A', 'VF_B', 'VF_C', 'VF_D', 'VF_E']
     fondos = ['A', 'B', 'C', 'D', 'E']
     df = pd.DataFrame(columns=cols)
     for fecha in rrule(DAILY, dtstart=start_date, until=end_date):
         fecha_x = "".join(str(fecha.date()).split("-"))
-        row = {
-            'Fecha': fecha,
-            'VF_A': 0.0,
-            'VF_B': 0.0,
-            'VF_C': 0.0,
-            'VF_D': 0.0,
-            'VF_E': 0.0,
-        }
-        for f in fondos:
-            try:
-                token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
-                # try:
-                # leer archivo como string
-                file = open(token, 'r')
-                data = file.read()
-                vf = pd.read_html(data, thousands='.', decimal=',')[3]
-                vf.columns = vf.columns.droplevel()
-
-                row['VF_'+f] = float(vf[vf['A.F.P.'] == 'TOTAL']
-                                     ['Valor del Patrimonio'].squeeze())
-                file.close()
-
-            except:
-                pass
-
-        df_i = pd.DataFrame(row, columns=cols, index=[0])
-        df = df.append(df_i, ignore_index=True, sort=False)
-
-    return df
-
-
-def vqfondos(start_date, end_date):
-    cols = ['Fecha', 'Q_A', 'Q_B', 'Q_C', 'Q_D', 'Q_E']
-    fondos = ['A', 'B', 'C', 'D', 'E']
-    df = pd.DataFrame(columns=cols)
-    for fecha in rrule(DAILY, dtstart=start_date, until=end_date):
-        fecha_x = "".join(str(fecha.date()).split("-"))
-        row = {
-            'Fecha': fecha,
-            'Q_A': 0.0,
-            'Q_B': 0.0,
-            'Q_C': 0.0,
-            'Q_D': 0.0,
-            'Q_E': 0.0,
-        }
+        # row = {
+        #    'Fecha': fecha,
+        #    'VF_A': 0.0,
+        #    'VF_B': 0.0,
+        #    'VF_C': 0.0,
+        #    'VF_D': 0.0,
+        #    'VF_E': 0.0,
+        # }
+        rows = dict()
         for f in fondos:
             try:
                 token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
@@ -574,15 +539,77 @@ def vqfondos(start_date, end_date):
                 for afp in vf['A.F.P.']:
                     if afp == 'TOTAL':
                         break
+                    if afp not in rows.keys():
+                        rows[afp] = dict()
+                        rows[afp]['Fecha'] = fecha
+                        rows[afp]['AFP'] = afp
+                        rows[afp]['VF_A'] = 0.0
+                        rows[afp]['VF_B'] = 0.0
+                        rows[afp]['VF_C'] = 0.0
+                        rows[afp]['VF_D'] = 0.0
+                        rows[afp]['VF_E'] = 0.0
                     p = float(vf[vf['A.F.P.'] == afp]
                               ['Valor del Patrimonio'].squeeze())
+
+                    rows[afp]['VF_'+f] = p
+                file.close()
+
+            except:
+                pass
+
+        df_i = pd.DataFrame([rows[afp] for afp in rows.keys()], columns=cols)
+        df = df.append(df_i, ignore_index=True, sort=False)
+
+    return df
+
+
+def vqfondos(start_date, end_date):
+    cols = ['Fecha', 'AFP', 'Q_A', 'Q_B', 'Q_C', 'Q_D', 'Q_E']
+    fondos = ['A', 'B', 'C', 'D', 'E']
+    df = pd.DataFrame(columns=cols)
+    for fecha in rrule(DAILY, dtstart=start_date, until=end_date):
+        fecha_x = "".join(str(fecha.date()).split("-"))
+        # row = {
+        #    'Fecha': fecha,
+        #    'AFP': '',
+        #    'Q_A': 0.0,
+        #    'Q_B': 0.0,
+        #    'Q_C': 0.0,
+        #    'Q_D': 0.0,
+        #    'Q_E': 0.0,
+        # }
+        rows = dict()
+        for f in fondos:
+            try:
+                token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
+                # try:
+                # leer archivo como string
+                file = open(token, 'r')
+                data = file.read()
+                vf = pd.read_html(data, thousands='.', decimal=',')[3]
+                vf.columns = vf.columns.droplevel()
+                for afp in vf['A.F.P.']:
+                    if afp == 'TOTAL':
+                        break
+                    if afp not in rows.keys():
+                        rows[afp] = dict()
+                        rows[afp]['Fecha'] = fecha
+                        rows[afp]['AFP'] = afp
+                        rows[afp]['Q_A'] = 0.0
+                        rows[afp]['Q_B'] = 0.0
+                        rows[afp]['Q_C'] = 0.0
+                        rows[afp]['Q_D'] = 0.0
+                        rows[afp]['Q_E'] = 0.0
+
                     c = float(vf[vf['A.F.P.'] == afp]['Valor Cuota'].squeeze())
-                    row['Q_'+f] += p/c
+
+                    rows[afp]['Q_'+f] = c
+
             except:
                 pass
             file.close()
-
-        df_i = pd.DataFrame(row, columns=cols, index=[0])
+        # print(rows)
+        df_i = pd.DataFrame([rows[afp] for afp in rows.keys()], columns=cols)
         df = df.append(df_i, ignore_index=True, sort=False)
 
     return df
@@ -616,8 +643,9 @@ def usdclp_last_month():
 
 # conectarse a la base de datos
 # cambiar esto por un log in con input de usuario
+# URI
 database = create_engine(
-    'postgres://pfjqxkqzdbefyh:9b90121091b9a7aaba720a1b848f7b707a82c8db9e374e1d7d3b16e96f6f6258@ec2-35-174-127-63.compute-1.amazonaws.com:5432/d3d9vrbrckuu50')
+    'postgres://ywbhjstvlwwguj:4169cd9bb75716133a084e53deb4481699ec6cdc5c2d253af098ffb00fc77457@ec2-18-211-48-247.compute-1.amazonaws.com:5432/dc69t4t9dl57ao')
 base = declarative_base()
 
 # ORM entidades de la bd
@@ -728,6 +756,7 @@ class VALOR_FONDOS(base):
     __tablename__ = 'valor_fondos'
     index = Column(Integer, autoincrement=True, primary_key=True)
     Fecha = Column(DateTime)
+    AFP = Column(String)
     VF_A = Column(Float)
     VF_B = Column(Float)
     VF_C = Column(Float)
@@ -739,6 +768,7 @@ class Q_INDEX(base):
     __tablename__ = 'q_index'
     index = Column(Integer, autoincrement=True, primary_key=True)
     Fecha = Column(DateTime)
+    AFP = Column(String)
     Q_A = Column(Float)
     Q_B = Column(Float)
     Q_C = Column(Float)
@@ -965,6 +995,24 @@ def upload_to_sql_monthly(start_date, end_date=None):
     session.commit()
 
 
+def upload_historic_usd():
+    df_usdclp = usdclp_hist()
+    delete_usdclp_dates(min(df_usdclp['Fecha']), max(df_usdclp['Fecha']))
+    if not df_usdclp.empty:
+        df_usdclp.to_sql("usdclp",
+                         database,
+                         if_exists='append',
+                         schema='public',
+                         index=False,
+                         chunksize=500,
+                         dtype={"Fecha": DateTime,
+                                "Precio": Float, }
+                         )
+    else:
+        print("Error inesparado: usdclp fx")
+    session.commit()
+
+
 def upload_to_sql_daily(start_date, end_date=None):
     if end_date == None:
         end_date = start_date
@@ -978,7 +1026,6 @@ def upload_to_sql_daily(start_date, end_date=None):
     for fecha in rrule(DAILY, dtstart=start_date, until=end_date):
         daily_delete_by_date(fecha)
     delete_usdclp_dates(min(df_usdclp['Fecha']), end_date)
-
     if not df_usdclp.empty:
         df_usdclp.to_sql("usdclp",
                          database,
@@ -1000,6 +1047,7 @@ def upload_to_sql_daily(start_date, end_date=None):
                      index=False,
                      chunksize=500,
                      dtype={"Fecha": DateTime,
+                            "AFP": String,
                             "VF_A": Float,
                             "VF_B": Float,
                             "VF_C": Float,
@@ -1018,11 +1066,12 @@ def upload_to_sql_daily(start_date, end_date=None):
                     index=False,
                     chunksize=500,
                     dtype={"Fecha": DateTime,
-                              "Q_A": Float,
-                              "Q_B": Float,
-                              "Q_C": Float,
-                              "Q_D": Float,
-                              "Q_E": Float
+                           "AFP": String,
+                           "Q_A": Float,
+                           "Q_B": Float,
+                           "Q_C": Float,
+                           "Q_D": Float,
+                           "Q_E": Float
                            }
                     )
     else:

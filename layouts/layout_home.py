@@ -21,7 +21,7 @@ header = html.Div(
         html.Div(
             [
                 html.H2('AFP Data',),
-                html.H6('Versión Beta 2.2.1', className='no-print'),
+                html.H6('Versión 3.0.1', className='no-print'),
             ], className='nine columns', style={'text-align': 'center', 'margin-right': '16.6%'}
         )
     ], className='nine columns',

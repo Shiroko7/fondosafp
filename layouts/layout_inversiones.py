@@ -71,6 +71,25 @@ layout_inversiones = html.Div([
     html.Div(
         [
             dcc.Dropdown(
+                id="dropdown_bar-nacio_monedas",
+                options=[
+                    {'label': 'Total', 'value': 'TOTAL'},
+                    {'label': 'Fondo A', 'value': 'A'},
+                    {'label': 'Fondo B', 'value': 'B'},
+                    {'label': 'Fondo C', 'value': 'C'},
+                    {'label': 'Fondo D', 'value': 'D'},
+                    {'label': 'Fondo E', 'value': 'E'},
+                ],
+                value='TOTAL',
+                className="dcc_control no-print"
+            ),
+            dcc.Loading(id="loading-icon_bar-nacio_monedas",
+                        children=[dcc.Graph(id='fig_bar_nacio_monedas')], type="circle"),
+        ], className='pretty_container'
+    ),
+    html.Div(
+        [
+            dcc.Dropdown(
                 id="dropdown_bar-inter",
                 options=[
                     {'label': 'Total', 'value': 'TOTAL'},

@@ -43,11 +43,12 @@ def display_page(pathname):
     elif pathname == '/apps/extranjeros':
         from layouts.layout_extranjeros import layout_extranjeros
         return layout_extranjeros
-    # elif pathname == '/apps/valores':
-    #    return layout_afp
+    elif pathname == '/apps/resumen':
+        from layouts.layout_resumen import layout_resumen
+        return layout_resumen
     else:
         return '404'
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)

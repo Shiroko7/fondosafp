@@ -24,6 +24,12 @@ layout_internacional = html.Div([
                 end_date=end_date,
                 display_format='M-D-Y',
             ),
+            dcc.Loading(id="loading-icon_fig-ex-fwd",
+                        children=[dcc.Graph(id='fig_ex-fwd')], type="circle"),
+        ], className='pretty_container'
+    ),
+    html.Div(
+        [
             dcc.Checklist(id='check_fig-ex', options=[
                           {'label': ' Mostrar en porcentaje', 'value': 'True'}], className="dcc_control no-print"),
             dcc.Loading(id="loading-icon_fig-ex",
