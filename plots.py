@@ -84,6 +84,22 @@ def fig_forwards_nacional(dfc, dfv, df, usdclp, resumen=False):
                 dtick=5000
             ),
         )
+        fig.add_trace(go.Scatter(
+            x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
+        fig.update_layout(
+            xaxis=dict(domain=[0, 0.985]),
+            yaxis=dict(
+                range=[0, max(dfv['TOTAL'])*1.1],
+            ),
+            yaxis2=dict(
+                dtick=5000,
+                range=[0, max(dfv['TOTAL'])*1.1],
+                position=0.985,
+                anchor="x",
+                overlaying="y",
+                side="right",
+            )
+        )
 
     fig.update_layout(title='Venta neta FWD USDCLP')
 
@@ -136,21 +152,53 @@ def patrimonio_ajustado(df_vf, df_q, usdclp, total):
         y_q = df_q['Q_A'] + df_q['Q_B'] + \
             df_q['Q_C'] + df_q['Q_D'] + df_q['Q_E']
         fig.add_trace(go.Scatter(x=df_q['Fecha'], y=y_q,
-                                 yaxis="y3", name='Total Fondos', hovertemplate='%{x}, %{y:.1f}'))
+                                 yaxis="y", marker_color='royalblue', name='Total Fondos', hovertemplate='%{x}, %{y:.1f}'))
+
         fig.update_layout(title='Total Patrimonio Ajustado por Rentabilidad')
+        fig.add_trace(go.Scatter(
+            x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
+        fig.update_layout(
+            xaxis=dict(domain=[0, 0.985]),
+            yaxis=dict(
+                range=[min(y_q)*0.99, max(y_q)*1.01],
+            ),
+            yaxis2=dict(
+                range=[min(y_q)*0.99, max(y_q)*1.01],
+                position=0.985,
+                anchor="x",
+                overlaying="y",
+                side="right",
+            )
+        )
     else:
         fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_A'],
-                                 yaxis="y3", name='Fondo A', hovertemplate='%{x}, %{y:.1f}'))
+                                 yaxis="y",  marker_color='royalblue', name='Fondo A', hovertemplate='%{x}, %{y:.1f}'))
         fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_B'],
-                                 yaxis="y3", name='Fondo B', hovertemplate='%{x}, %{y:.1f}'))
+                                 yaxis="y", name='Fondo B', hovertemplate='%{x}, %{y:.1f}'))
         fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_C'],
-                                 yaxis="y3", name='Fondo C', hovertemplate='%{x}, %{y:.1f}'))
+                                 yaxis="y", name='Fondo C', hovertemplate='%{x}, %{y:.1f}'))
         fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_D'],
-                                 yaxis="y3", name='Fondo D', hovertemplate='%{x}, %{y:.1f}'))
+                                 yaxis="y", name='Fondo D', hovertemplate='%{x}, %{y:.1f}'))
         fig.add_trace(go.Scatter(x=df_q['Fecha'], y=df_q['Q_E'],
-                                 yaxis="y3", name='Fondo E', hovertemplate='%{x}, %{y:.1f}'))
+                                 yaxis="y", name='Fondo E', hovertemplate='%{x}, %{y:.1f}'))
         fig.update_layout(
             title='Patrimonio del Fondo Ajustado por Rentabilidad')
+        fig.add_trace(go.Scatter(
+            x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
+        fig.update_layout(
+            xaxis=dict(domain=[0, 0.985]),
+            yaxis=dict(
+                range=[min(df_q['Q_A'])*0.95, max(df_q['Q_C'])*1.1],
+            ),
+            yaxis2=dict(
+                range=[min(df_q['Q_A'])*0.95, max(df_q['Q_C'])*1.1],
+                position=0.985,
+                anchor="x",
+                overlaying="y",
+                side="right",
+            )
+        )
+    fig.update_layout(yaxis={'title': "USD"})
 
     return fig
 
@@ -406,7 +454,22 @@ def fig_total_ex_fwd(df_ex, dfc, dfv, df):
 
     fig.update_layout(yaxis={'title': 'MMUSD'},
                       title='INVERSIÓN EXTRANJERA TOTAL MMUSD')
+    fig.add_trace(go.Scatter(
+        x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
 
+    fig.update_layout(
+        xaxis=dict(domain=[0, 0.985]),
+        yaxis=dict(
+            range=[0, max(df_ex['MMUSD_TOTAL'])*1.1],
+        ),
+        yaxis2=dict(
+            range=[0, max(df_ex['MMUSD_TOTAL'])*1.1],
+            position=0.985,
+            anchor="x",
+            overlaying="y",
+            side="right",
+        )
+    )
     return fig
 
 
@@ -442,6 +505,21 @@ def fig_inversiones(df_input, label, tipo):
 
     fig.update_layout(yaxis={'title': y_title},
                       title=title)
+    fig.add_trace(go.Scatter(
+        x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
+    fig.update_layout(
+        xaxis=dict(domain=[0, 0.985]),
+        yaxis=dict(
+            range=[0, max(df[t+'C'])*1.05],
+        ),
+        yaxis2=dict(
+            range=[0, max(df[t+'C'])*1.05],
+            position=0.985,
+            anchor="x",
+            overlaying="y",
+            side="right",
+        )
+    )
     return fig
 
 
@@ -501,15 +579,15 @@ def fig_hedge(df_inter, dfc, dfv, df_fn, usdclp, resumen=False):
                         'INVERSIÓN EXTRANJERA'].reset_index()
 
     fig.add_trace(go.Scatter(
-        x=df_inter['Fecha'], y=df_fn['Fondo_A']/df_inter['MMUSD_A']*100, yaxis="y", name='Fondo A', hovertemplate='%{x}, %{y:.1f}'))
+        x=df_fn['Fecha'], y=df_fn['Fondo_A']/df_inter['MMUSD_A']*100, yaxis="y", name='Fondo A', hovertemplate='%{x}, %{y:.1f}'))
     fig.add_trace(go.Scatter(
-        x=df_inter['Fecha'], y=df_fn['Fondo_B']/df_inter['MMUSD_B']*100, yaxis="y", name='Fondo B', hovertemplate='%{x}, %{y:.1f}'))
+        x=df_fn['Fecha'], y=df_fn['Fondo_B']/df_inter['MMUSD_B']*100, yaxis="y", name='Fondo B', hovertemplate='%{x}, %{y:.1f}'))
     fig.add_trace(go.Scatter(
-        x=df_inter['Fecha'], y=df_fn['Fondo_C']/df_inter['MMUSD_C']*100, yaxis="y", name='Fondo C', hovertemplate='%{x}, %{y:.1f}'))
+        x=df_fn['Fecha'], y=df_fn['Fondo_C']/df_inter['MMUSD_C']*100, yaxis="y", name='Fondo C', hovertemplate='%{x}, %{y:.1f}'))
     fig.add_trace(go.Scatter(
-        x=df_inter['Fecha'], y=df_fn['Fondo_D']/df_inter['MMUSD_D']*100, yaxis="y", name='Fondo D', hovertemplate='%{x}, %{y:.1f}'))
+        x=df_fn['Fecha'], y=df_fn['Fondo_D']/df_inter['MMUSD_D']*100, yaxis="y", name='Fondo D', hovertemplate='%{x}, %{y:.1f}'))
     fig.add_trace(go.Scatter(
-        x=df_inter['Fecha'], y=df_fn['Fondo_E']/df_inter['MMUSD_E']*100, yaxis="y", name='Fondo E', hovertemplate='%{x}, %{y:.1f}'))
+        x=df_fn['Fecha'], y=df_fn['Fondo_E']/df_inter['MMUSD_E']*100, yaxis="y", name='Fondo E', hovertemplate='%{x}, %{y:.1f}'))
 
     if not resumen:
         fig.add_trace(go.Scatter(x=usdclp['Fecha'], y=usdclp['Precio'], yaxis="y2",
@@ -543,6 +621,26 @@ def fig_hedge(df_inter, dfc, dfv, df_fn, usdclp, resumen=False):
             ),
         )
 
+    else:
+        fig.add_trace(go.Scatter(
+            x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
+        fig.update_layout(
+            xaxis=dict(domain=[0, 0.985]),
+            yaxis=dict(
+                range=[0, 100],
+                tickmode='array',
+                tickvals=[i*10 for i in range(11)],
+            ),
+            yaxis2=dict(
+                range=[0, 100],
+                position=0.985,
+                anchor="x",
+                overlaying="y",
+                side="right",
+                tickmode='array',
+                tickvals=[i*10 for i in range(11)],
+            )
+        )
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Porcentaje Inversión Extranjera Hedge')
 
@@ -556,8 +654,9 @@ def fig_hedge_total(df_inter, dfc, dfv, df_fn, usdclp, resumen=False):
     df_inter = df_inter[df_inter['Nombre'] ==
                         'INVERSIÓN EXTRANJERA'].reset_index()
 
+    y_p = df_fn['TOTAL']/df_inter['MMUSD_TOTAL']*100
     fig.add_trace(go.Scatter(
-        x=df_inter['Fecha'], y=df_fn['TOTAL']/df_inter['MMUSD_TOTAL']*100, yaxis="y", name='Total', hovertemplate='%{x}, %{y:.1f}'))
+        x=df_inter['Fecha'], y=y_p, yaxis="y", name='Total', hovertemplate='%{x}, %{y:.1f}'))
 
     if not resumen:
         fig.add_trace(go.Scatter(x=usdclp['Fecha'], y=usdclp['Precio'], yaxis="y2",
@@ -589,6 +688,28 @@ def fig_hedge_total(df_inter, dfc, dfv, df_fn, usdclp, resumen=False):
                 overlaying="y",
                 position=0.1
             ),
+        )
+    else:
+        fig.add_trace(go.Scatter(
+            x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
+        fig.update_layout(
+            xaxis=dict(domain=[0, 0.985]),
+            yaxis=dict(
+                dtick=5,
+                range=[max(0, min(y_p)-5), min(100, max(y_p)+5)],
+                tickmode='array',
+                tickvals=[i*10 for i in range(11)],
+            ),
+            yaxis2=dict(
+                dtick=5,
+                range=[max(0, min(y_p)-5), min(100, max(y_p)+5)],
+                position=0.985,
+                anchor="x",
+                overlaying="y",
+                side="right",
+                tickmode='array',
+                tickvals=[i*10 for i in range(11)],
+            )
         )
 
     fig.update_layout(yaxis={'title': '%Fondo'},
@@ -682,13 +803,27 @@ def bar_inversion_nacional(df_nacio, fondo):
 
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Inversión Nacional ' + fondo)
-    fig.update_yaxes(range=[0, 100])
+
+    fig.add_trace(go.Scatter(
+        x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
     fig.update_layout(
+        xaxis=dict(domain=[0, 0.985]),
         yaxis=dict(
+            range=[0, 100],
+            tickmode='array',
+            tickvals=[i*10 for i in range(11)],
+        ),
+        yaxis2=dict(
+            range=[0, 100],
+            position=0.985,
+            anchor="x",
+            overlaying="y",
+            side="right",
             tickmode='array',
             tickvals=[i*10 for i in range(11)],
         )
     )
+
     fig.update_layout(barmode='stack')
     return fig
 
@@ -729,9 +864,21 @@ def bar_inversion_nacional_monedas(df_bonos_clp, df_bonos_uf, fondo):
                              showlegend=True,))
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Inversión Nacional Bonos ' + fondo)
-    fig.update_yaxes(range=[0, 100])
+    fig.add_trace(go.Scatter(
+        x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
     fig.update_layout(
+        xaxis=dict(domain=[0, 0.985]),
         yaxis=dict(
+            range=[0, 100],
+            tickmode='array',
+            tickvals=[i*10 for i in range(11)],
+        ),
+        yaxis2=dict(
+            range=[0, 100],
+            position=0.985,
+            anchor="x",
+            overlaying="y",
+            side="right",
             tickmode='array',
             tickvals=[i*10 for i in range(11)],
         )
@@ -787,9 +934,21 @@ def bar_inversion_internacional(df_inter, fondo):
 
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Inversión Internacional ' + fondo)
-    fig.update_yaxes(range=[0, 100])
+    fig.add_trace(go.Scatter(
+        x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
     fig.update_layout(
+        xaxis=dict(domain=[0, 0.985]),
         yaxis=dict(
+            range=[0, 100],
+            tickmode='array',
+            tickvals=[i*10 for i in range(11)],
+        ),
+        yaxis2=dict(
+            range=[0, 100],
+            position=0.985,
+            anchor="x",
+            overlaying="y",
+            side="right",
             tickmode='array',
             tickvals=[i*10 for i in range(11)],
         )
@@ -846,9 +1005,21 @@ def bar_inversion(df_nacio, df_inter, fondo):
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Inversión ' + fondo)
 
-    fig.update_yaxes(range=[0, 100])
+    fig.add_trace(go.Scatter(
+        x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
     fig.update_layout(
+        xaxis=dict(domain=[0, 0.985]),
         yaxis=dict(
+            range=[0, 100],
+            tickmode='array',
+            tickvals=[i*10 for i in range(11)],
+        ),
+        yaxis2=dict(
+            range=[0, 100],
+            position=0.985,
+            anchor="x",
+            overlaying="y",
+            side="right",
             tickmode='array',
             tickvals=[i*10 for i in range(11)],
         )
