@@ -532,7 +532,7 @@ def vcfondos(start_date, end_date):
                 token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
                 # try:
                 # leer archivo como string
-                file = open(token, 'r')
+                file = open(token, 'r', encoding='utf-8')
                 data = file.read()
                 vf = pd.read_html(data, thousands='.', decimal=',')[3]
                 vf.columns = vf.columns.droplevel()
@@ -584,7 +584,7 @@ def vqfondos(start_date, end_date):
             token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
             # try:
             # leer archivo como string
-            file = open(token, 'r')
+            file = open(token, 'r', encoding='utf-8')
             data = file.read()
             vf = pd.read_html(data, thousands='.', decimal=',')[3]
             vf.columns = vf.columns.droplevel()
