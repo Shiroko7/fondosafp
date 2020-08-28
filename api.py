@@ -201,8 +201,12 @@ def forward_nacional(start_date, end_date):
             token = "afp_fw_nacional_{0}.aspx".format(fecha_x)
             # try:
             # leer archivo como string
-            file = open(token, 'r', encoding='utf-8')
-            data = file.read()
+            try:
+                file = open(token, 'r', encoding="utf-8")
+                data = file.read()
+            except:
+                file = open(token, 'r', encoding="ISO-8859-1")
+                data = file.read()
             # buscar tabla dólar
 
             df_i = pd.read_html(data, header=0, thousands='.', decimal=',')[0]
@@ -266,8 +270,12 @@ def inversiones(start_date, end_date):
             # print(fecha_x)
             token = "afp_inversiones_{0}.aspx".format(fecha_x)
             # leer archivo como string
-            file = open(token, 'r', encoding='utf-8')
-            data = file.read()
+            try:
+                file = open(token, 'r', encoding="utf-8")
+                data = file.read()
+            except:
+                file = open(token, 'r', encoding="ISO-8859-1")
+                data = file.read()
             # buscar tabla
             df = pd.read_html(data, header=1, thousands='.', decimal=',')[0]
         except:
@@ -364,8 +372,12 @@ def activos(start_date, end_date):
             fecha_x = "".join(str(fecha)[0:7].split("-"))
             token = "afp_activos_{0}.aspx".format(fecha_x)
             # leer archivo como string
-            file = open(token, 'r', encoding='utf-8')
-            data = file.read()
+            try:
+                file = open(token, 'r', encoding="utf-8")
+                data = file.read()
+            except:
+                file = open(token, 'r', encoding="ISO-8859-1")
+                data = file.read()
             # buscar tabla
             df_i = pd.read_html(data, header=1, thousands='.', decimal=',')[0]
         except:
@@ -433,8 +445,12 @@ def extranjeros(start_date, end_date):
             fecha_x = "".join(str(fecha)[0:7].split("-"))
             token = "afp_extranjeros_{0}.aspx".format(fecha_x)
             # leer archivo como string
-            file = open(token, 'r', encoding='utf-8')
-            data = file.read()
+            try:
+                file = open(token, 'r', encoding="utf-8")
+                data = file.read()
+            except:
+                file = open(token, 'r', encoding="ISO-8859-1")
+                data = file.read()
             # buscar tabla
             df = pd.read_html(data, header=1, thousands='.', decimal=',')[0]
         except:
@@ -532,8 +548,12 @@ def vcfondos(start_date, end_date):
                 token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
                 # try:
                 # leer archivo como string
-                file = open(token, 'r', encoding='utf-8')
-                data = file.read()
+                try:
+                    file = open(token, 'r', encoding="utf-8")
+                    data = file.read()
+                except:
+                    file = open(token, 'r', encoding="ISO-8859-1")
+                    data = file.read()
                 vf = pd.read_html(data, thousands='.', decimal=',')[3]
                 vf.columns = vf.columns.droplevel()
                 for afp in vf['A.F.P.']:
@@ -584,8 +604,12 @@ def vqfondos(start_date, end_date):
             token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
             # try:
             # leer archivo como string
-            file = open(token, 'r', encoding='utf-8')
-            data = file.read()
+            try:
+                file = open(token, 'r', encoding="utf-8")
+                data = file.read()
+            except:
+                file = open(token, 'r', encoding="ISO-8859-1")
+                data = file.read()
             vf = pd.read_html(data, thousands='.', decimal=',')[3]
             vf.columns = vf.columns.droplevel()
             for afp in vf['A.F.P.']:
