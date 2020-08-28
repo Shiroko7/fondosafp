@@ -580,33 +580,33 @@ def vqfondos(start_date, end_date):
         # }
         rows = dict()
         for f in fondos:
-            try:
-                token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
-                # try:
-                # leer archivo como string
-                file = open(token, 'r')
-                data = file.read()
-                vf = pd.read_html(data, thousands='.', decimal=',')[3]
-                vf.columns = vf.columns.droplevel()
-                for afp in vf['A.F.P.']:
-                    if afp == 'TOTAL':
-                        break
-                    if afp not in rows.keys():
-                        rows[afp] = dict()
-                        rows[afp]['Fecha'] = fecha
-                        rows[afp]['AFP'] = afp
-                        rows[afp]['Q_A'] = 0.0
-                        rows[afp]['Q_B'] = 0.0
-                        rows[afp]['Q_C'] = 0.0
-                        rows[afp]['Q_D'] = 0.0
-                        rows[afp]['Q_E'] = 0.0
+            # try:
+            token = "vcf{fondo}_{date}.aspx".format(fondo=f, date=fecha_x)
+            # try:
+            # leer archivo como string
+            file = open(token, 'r')
+            data = file.read()
+            vf = pd.read_html(data, thousands='.', decimal=',')[3]
+            vf.columns = vf.columns.droplevel()
+            for afp in vf['A.F.P.']:
+                if afp == 'TOTAL':
+                    break
+                if afp not in rows.keys():
+                    rows[afp] = dict()
+                    rows[afp]['Fecha'] = fecha
+                    rows[afp]['AFP'] = afp
+                    rows[afp]['Q_A'] = 0.0
+                    rows[afp]['Q_B'] = 0.0
+                    rows[afp]['Q_C'] = 0.0
+                    rows[afp]['Q_D'] = 0.0
+                    rows[afp]['Q_E'] = 0.0
 
-                    c = float(vf[vf['A.F.P.'] == afp]['Valor Cuota'].squeeze())
+                c = float(vf[vf['A.F.P.'] == afp]['Valor Cuota'].squeeze())
 
-                    rows[afp]['Q_'+f] = c
+                rows[afp]['Q_'+f] = c
 
-            except:
-                pass
+            # except:
+            #    pass
             file.close()
         # print(rows)
         df_i = pd.DataFrame([rows[afp] for afp in rows.keys()], columns=cols)
