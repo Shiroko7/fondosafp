@@ -383,8 +383,9 @@ def activos(start_date, end_date):
         except:
             continue
 
+        fecha = last_day_of_month(fecha)
         df_i.columns = cols
-        df_i['Fecha'] = last_day_of_month(fecha)
+        df_i['Fecha'] = fecha
 
         bcp = df_i[df_i['Nombre'].str.match('BCP')]
         btp = df_i[df_i['Nombre'].str.match('BTP')]

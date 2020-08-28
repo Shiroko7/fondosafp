@@ -854,6 +854,7 @@ def bar_inversion_nacional_monedas(df_bonos_clp, df_bonos_uf, fondo):
     fig = go.Figure()
     fechas = pd.to_datetime(df_bonos_clp.Fecha.unique())
     df_bonos_clp['Porcentaje_'+fondo]
+
     fig.add_trace(go.Bar(
         x=fechas, y=df_bonos_clp['Porcentaje_'+fondo], name='Bonos CLP', hovertemplate='%{x}, %{y:.1f}'))
     fig.add_trace(go.Bar(
