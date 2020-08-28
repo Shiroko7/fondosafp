@@ -33,3 +33,4 @@ def update_carteras(tipo, start_date, end_date, confirmar=False, clear=False):
         for filename in os.listdir():
             if filename.endswith(".aspx"):
                 os.remove(filename)
+    print("Update terminado.")

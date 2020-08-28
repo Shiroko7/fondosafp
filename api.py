@@ -1138,8 +1138,8 @@ def query_by_daterange(label, start_date, end_date):
         return None
 
     df = pd.read_sql(input_rows.statement, input_rows.session.bind)
-    df = df.drop(columns='index')
-    df = df.sort_values(by='Fecha')
+    df = df.drop(columns=['index'])
+    df = df.sort_values(by=['Fecha'])
     df.reset_index(inplace=True, drop=True)
 
     return df

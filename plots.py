@@ -205,7 +205,7 @@ def patrimonio_ajustado(df_vf, df_q, usdclp, total):
 
 def clp_to_usd(df, usdclp):
     # print(usdclp.columns)
-    #usdclp['Fecha'] = usdclp['Fecha'].str.slice(stop=10)
+    # usdclp['Fecha'] = usdclp['Fecha'].str.slice(stop=10)
     df_new = df.copy().reset_index()
 
     usdclp['Fecha'] = pd.to_datetime(usdclp['Fecha'])
@@ -214,9 +214,9 @@ def clp_to_usd(df, usdclp):
     for i in range(len(df_new)):
         fx = usdclp[usdclp['Fecha'] == df_new.loc[i, 'Fecha']]['Precio']
         if fx is not None and len(fx) > 0:
-            #print(df.loc[i,'VF_A'] )
+            # print(df.loc[i,'VF_A'] )
             # print(fx.squeeze())
-            #print(df.loc[i,'Fecha'], ": ", df.loc[i,'VF_A'], "/", fx)
+            # print(df.loc[i,'Fecha'], ": ", df.loc[i,'VF_A'], "/", fx)
             df_new.loc[i, 'VF_A'] = df_new.loc[i, 'VF_A'] / fx.squeeze()
             df_new.loc[i, 'VF_B'] = df_new.loc[i, 'VF_B'] / fx.squeeze()
             df_new.loc[i, 'VF_C'] = df_new.loc[i, 'VF_C'] / fx.squeeze()
@@ -492,6 +492,12 @@ def fig_inversiones(df_input, label, tipo):
     if label != 'INVERSIÓN EXTRANJERA':
         fig.add_trace(go.Scatter(
             x=df['Fecha'], y=df[t+'TOTAL'], name='Total', hovertemplate='%{x}, %{y:.1f}'))
+        top = max([max(df[t+'A']), max(df[t+'B']), max(df[t+'C']),
+                   max(df[t+'D']), max(df[t+'E']), max(df[t+'TOTAL'])])
+    else:
+        top = max([max(df[t+'A']), max(df[t+'B']), max(df[t+'C']),
+                   max(df[t+'D']), max(df[t+'E'])])
+
     fig.add_trace(go.Scatter(
         x=df['Fecha'], y=df[t+'A'], name='Fondo A', hovertemplate='%{x}, %{y:.1f}'))
     fig.add_trace(go.Scatter(
@@ -507,13 +513,14 @@ def fig_inversiones(df_input, label, tipo):
                       title=title)
     fig.add_trace(go.Scatter(
         x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
+
     fig.update_layout(
         xaxis=dict(domain=[0, 0.985]),
         yaxis=dict(
-            range=[0, max(df[t+'C'])*1.05],
+            range=[0, top*1.05],
         ),
         yaxis2=dict(
-            range=[0, max(df[t+'C'])*1.05],
+            range=[0, top*1.05],
             position=0.985,
             anchor="x",
             overlaying="y",
@@ -545,6 +552,26 @@ def fig_activos(df_input, label, tipo):
         fig.add_trace(go.Scatter(
             x=df['Fecha'], y=df[tipo+'E'], name='Fondo E', hovertemplate='%{x}, %{y:.1f}'))
 
+        mini = min([min(df[tipo+'TOTAL']), min(df[tipo+'A']), min(df[tipo+'B']),
+                    min(df[tipo+'C']), min(df[tipo+'D']), min(df[tipo+'E'])])-2
+        topi = max([max(df[tipo+'TOTAL']), max(df[tipo+'A']), max(df[tipo+'B']),
+                    max(df[tipo+'C']), max(df[tipo+'D']), max(df[tipo+'E'])])+2
+
+        fig.add_trace(go.Scatter(
+            x=[0], y=[0], visible=False, showlegend=False, yaxis="y2"))
+        fig.update_layout(
+            xaxis=dict(domain=[0, 0.985]),
+            yaxis=dict(
+                range=[max(-1, mini), min(100, topi)],
+            ),
+            yaxis2=dict(
+                range=[max(-1, mini), min(100, topi)],
+                position=0.985,
+                anchor="x",
+                overlaying="y",
+                side="right",
+            )
+        )
     else:
         y_title = tipo
         title = label + ' ' + tipo
