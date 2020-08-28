@@ -908,21 +908,22 @@ def bar_inversion_internacional(df_inter, fondo):
         go.Bar(x=fechas, hovertemplate='%{x}, %{y:.1f}', y=y_rf, name='Renta Fija'))
 
     # promedio
-    promedio_rv = sum(y_rv)/len(y_rv)
-    fig.add_shape(
-        # Line Horizontal
-        go.layout.Shape(
-            type="line",
-            x0=fechas[0],
-            y0=promedio_rv,
-            x1=fechas[-1],
-            y1=promedio_rv,
-            line=dict(
-                color='black',
-                width=2,
-                dash="dashdot",
-            ),
-        ))
+    if len(y_rv) != 0:
+        promedio_rv = sum(y_rv)/len(y_rv)
+        fig.add_shape(
+            # Line Horizontal
+            go.layout.Shape(
+                type="line",
+                x0=fechas[0],
+                y0=promedio_rv,
+                x1=fechas[-1],
+                y1=promedio_rv,
+                line=dict(
+                    color='black',
+                    width=2,
+                    dash="dashdot",
+                ),
+            ))
 
     fig.add_trace(go.Scatter(x=[fechas[0], fechas[-1]],
                              y=[promedio_rv, promedio_rv],
@@ -977,21 +978,22 @@ def bar_inversion(df_nacio, df_inter, fondo):
                          name='Internacional', hovertemplate='%{x}, %{y:.1f}'))
 
     # promedio
-    promedio_nacional = sum(y_nacio)/len(y_nacio)
-    fig.add_shape(
-        # Line Horizontal
-        go.layout.Shape(
-            type="line",
-            x0=fechas[0],
-            y0=promedio_nacional,
-            x1=fechas[-1],
-            y1=promedio_nacional,
-            line=dict(
-                color='black',
-                width=2,
-                dash="dashdot",
-            ),
-        ))
+    if len(y_nacio) != 0:
+        promedio_nacional = sum(y_nacio)/len(y_nacio)
+        fig.add_shape(
+            # Line Horizontal
+            go.layout.Shape(
+                type="line",
+                x0=fechas[0],
+                y0=promedio_nacional,
+                x1=fechas[-1],
+                y1=promedio_nacional,
+                line=dict(
+                    color='black',
+                    width=2,
+                    dash="dashdot",
+                ),
+            ))
 
     fig.add_trace(go.Scatter(x=[fechas[0], fechas[-1]],
                              y=[promedio_nacional, promedio_nacional],
