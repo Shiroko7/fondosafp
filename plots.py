@@ -860,29 +860,30 @@ def bar_inversion_nacional_monedas(df_bonos_clp, df_bonos_uf, fondo):
     fig.add_trace(go.Bar(
         x=fechas, y=df_bonos_uf['Porcentaje_'+fondo], name='Bonos UF', hovertemplate='%{x}, %{y:.1f}'))
     # promedio
-    promedio_clp = sum(df_bonos_clp['Porcentaje_'+fondo]) / \
-        len(df_bonos_clp['Porcentaje_'+fondo])
-    fig.add_shape(
-        # Line Horizontal
-        go.layout.Shape(
-            type="line",
-            x0=fechas[0],
-            y0=promedio_clp,
-            x1=fechas[-1],
-            y1=promedio_clp,
-            line=dict(
-                color='black',
-                width=2,
-                dash="dashdot",
-            ),
-        ))
+    if len(df_bonos_clp['Porcentaje_'+fondo]) != 0:
+        promedio_clp = sum(df_bonos_clp['Porcentaje_'+fondo]) / \
+            len(df_bonos_clp['Porcentaje_'+fondo])
+        fig.add_shape(
+            # Line Horizontal
+            go.layout.Shape(
+                type="line",
+                x0=fechas[0],
+                y0=promedio_clp,
+                x1=fechas[-1],
+                y1=promedio_clp,
+                line=dict(
+                    color='black',
+                    width=2,
+                    dash="dashdot",
+                ),
+            ))
 
-    fig.add_trace(go.Scatter(x=[fechas[0], fechas[-1]],
-                             y=[promedio_clp, promedio_clp],
-                             name='Promedio CLP: ' +
-                             str(int(promedio_clp))+'%',
-                             mode='markers',
-                             marker=dict(color=['black']),
+        fig.add_trace(go.Scatter(x=[fechas[0], fechas[-1]],
+                                 y=[promedio_clp, promedio_clp],
+                                 name='Promedio CLP: ' +
+                                 str(int(promedio_clp))+'%',
+                                 mode='markers',
+                                 marker=dict(color=['black']),
                              hovertemplate='%{x}, %{y:.1f}'))
     fig.update_layout(yaxis={'title': '%Fondo'},
                       title='Inversión Nacional Bonos ' + fondo)

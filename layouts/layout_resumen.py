@@ -28,12 +28,6 @@ layout_resumen = html.Div([
     # PAGE 1
     html.Div(
         [
-
-        ], className='Parent'
-    ),
-    # PAGE 1
-    html.Div(
-        [
             html.Div(
                 [
                     html.Div(
@@ -133,7 +127,7 @@ layout_resumen = html.Div([
             ),
             html.Div(
                 [
-                    html.Div([html.Img(src='assets/Banco_de_Chile_Logo.png',
+                    html.Div([html.Img(src='../assets/Banco_de_Chile_Logo.png',
                                            style={'height': '24px', 'width': '144px'}),
                               html.Div([html.P('Fuente: Superintendencia de Pensiones')],
                                        className='Fuente'),
@@ -144,5 +138,4 @@ layout_resumen = html.Div([
             ),
         ], className='Parent'
     ),
-
 ])

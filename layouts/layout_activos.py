@@ -41,4 +41,15 @@ layout_activos = html.Div([
                         children=[dcc.Graph(id='fig_act_ex')], type="circle"),
         ], className='pretty_container'
     ),
+            html.Div(
+                [
+                    html.Div([html.Img(src='../assets/Banco_de_Chile_Logo.png',
+                                           style={'height': '24px', 'width': '144px'}),
+                              html.Div([html.P('Fuente: Superintendencia de Pensiones')],
+                                       className='Fuente'),
+                              html.P('Este archivo es confidencial y destinado únicamente para uso interno.', style={'textAlign': 'right', 'fontStyle': 'italic'
+                                                                                                                     }), ], className='twelve columns')
+                ],
+                className="foot row",
+            ),
 ])

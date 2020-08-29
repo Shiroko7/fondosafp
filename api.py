@@ -876,6 +876,26 @@ def upload_to_sql_monthly(start_date, end_date=None):
     df_activos = activos(start_date, end_date).dropna()
     df_extranjeros = extranjeros(start_date, end_date).dropna()
 
+    if not df_activos.empty:
+        df_activos.to_sql("activos",
+                          database,
+                          if_exists='append',
+                          schema='public',
+                          index=False,
+                          chunksize=500,
+                          dtype={"Fecha": DateTime,
+                                 "Nombre": Text,
+                                 "Porcentaje_A": Float,
+                                 "Porcentaje_B": Float,
+                                 "Porcentaje_C": Float,
+                                 "Porcentaje_D": Float,
+                                 "Porcentaje_E": Float,
+                                 "Porcentaje_TOTAL": Float,
+                                 "MM_TOTAL": Float,
+                                 "MMUSD_TOTAL": Float}
+                          )
+    else:
+        print("Error inesparado: activos")
     # IMPORTANTE: CADA UPLOAD DE UN DÍA PRIMERO BOTA LO QUE YA ESTA, PARA NO DUPLICAR DATA ACCIDENTALMENTE
     for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
         monthly_delete_by_date(last_day_of_month(fecha))

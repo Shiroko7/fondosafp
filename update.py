@@ -34,3 +34,7 @@ def update_carteras(tipo, start_date, end_date, confirmar=False, clear=False):
             if filename.endswith(".aspx"):
                 os.remove(filename)
     print("Update terminado.")
+
+
+update_carteras("monthly", date(2016, 8, 1), date(
+    2020, 8, 2), confirmar=True, clear=False)
