@@ -117,8 +117,10 @@ def download_extranjeros(fecha):
 
 
 def mult_dl(downloader, start_date, end_date):
-    if start_date == None or end_date == None:
+    if start_date == None:
         return
+    if end_date == None:
+        downloader(start_date)
     months = list(rrule(MONTHLY, dtstart=start_date, until=end_date))
     if (end_date.day < 11):
         months = months[:-1]

@@ -10,8 +10,8 @@ from api import download_vf
 from api import daily_delete_by_date, delete_usdclp_dates, monthly_delete_by_date, upload_historic_usd
 
 
-def update_carteras(tipo, start_date, end_date, confirmar=False, clear=False):
-    if not confirmar:
+def update_carteras(tipo, start_date, end_date=None, confirmar=False, clear=False):
+    if not confirmar or start_date == None:
         return
 
     if tipo == 'monthly':
@@ -36,5 +36,21 @@ def update_carteras(tipo, start_date, end_date, confirmar=False, clear=False):
     print("Update terminado.")
 
 
-update_carteras("monthly", date(2016, 8, 1), date(
-    2020, 8, 2), confirmar=True, clear=False)
+def update_monthly(month, year,confirmar=False, clear=False):
+    if not confirmar or month == None or year == None:
+        return
+
+    fecha = date(year,month,1)
+    # descargar mensuales
+    dls = [download_forward_nacional, download_inversiones,
+            download_activos, download_extranjeros]
+    for dl in dls:
+        mult_dl(dl, fecha)
+    upload_to_sql_monthly(fecha)
+
+
+    if clear:
+        for filename in os.listdir():
+            if filename.endswith(".aspx"):
+                os.remove(filename)
+    print("Update terminado.")
