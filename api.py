@@ -121,13 +121,14 @@ def mult_dl(downloader, start_date, end_date=None):
         return
     if end_date == None:
         downloader(start_date)
-    months = list(rrule(MONTHLY, dtstart=start_date, until=end_date))
-    if (end_date.day < 11):
-        months = months[:-1]
-    elif(end_date.month == months[-1].month):
-        months = months[:-1]
-    for d in months:
-        downloader(d)
+    else:
+        months = list(rrule(MONTHLY, dtstart=start_date, until=end_date))
+        if (end_date.day < 11):
+            months = months[:-1]
+        elif(end_date.month == months[-1].month):
+            months = months[:-1]
+        for d in months:
+            downloader(d)
 
 
 # download vf & q
