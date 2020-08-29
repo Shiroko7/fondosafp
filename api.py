@@ -116,7 +116,7 @@ def download_extranjeros(fecha):
 # downloader MENSUAL
 
 
-def mult_dl(downloader, start_date, end_date):
+def mult_dl(downloader, start_date, end_date=None):
     if start_date == None:
         return
     if end_date == None:
