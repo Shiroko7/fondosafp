@@ -40,14 +40,14 @@ def download_forward_nacional(fecha):
     token = "afp_fw_nacional_{0}.aspx".format(fecha_x)
 
     # actual download
-    try:
-        urllib.request.urlretrieve(url, token)
+   # try:
+    urllib.request.urlretrieve(url, token)
 
-        out = "CARTERA DE LOS FONDOS DE PENSIONES EN INSTRUMENTOS FORWARD NACIONALES {0} descargada con éxito".format(
-            str(fecha))
-    except:
-        out = "Warning: CARTERA DE LOS FONDOS DE PENSIONES EN INSTRUMENTOS FORWARD NACIONALES {0} no se pudo descargar".format(
-            str(fecha))
+    #    out = "CARTERA DE LOS FONDOS DE PENSIONES EN INSTRUMENTOS FORWARD NACIONALES {0} descargada con éxito".format(
+    #        str(fecha))
+    # except:
+    #    out = "Warning: CARTERA DE LOS FONDOS DE PENSIONES EN INSTRUMENTOS FORWARD NACIONALES {0} no se pudo descargar".format(
+    #        str(fecha))
     print(out)
 
 

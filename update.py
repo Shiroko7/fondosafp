@@ -36,18 +36,19 @@ def update_carteras(tipo, start_date, end_date=None, confirmar=False, clear=Fals
     print("Update terminado.")
 
 
-def update_monthly(month, year,confirmar=False, clear=False):
+def update_monthly(month, year, confirmar=False, clear=False):
     if not confirmar or month == None or year == None:
         return
-
-    fecha = date(year,month,1)
+    if (date.today().month == month) and (date.today().year) == year and (date.today().day < 11):
+        print("Cartera del mes no disponible aún.")
+        return
+    fecha = date(year, month, 1)
     # descargar mensuales
     dls = [download_forward_nacional, download_inversiones,
-            download_activos, download_extranjeros]
+           download_activos, download_extranjeros]
     for dl in dls:
         mult_dl(dl, fecha)
     upload_to_sql_monthly(fecha)
-
 
     if clear:
         for filename in os.listdir():
