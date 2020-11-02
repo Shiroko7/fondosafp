@@ -69,8 +69,7 @@ layout_home_head = html.Div([
     #dcc.Loading(children=[html.A(['Actualizar data'],id="update-button",className="button no-print print",style={'margin': '0 auto'}),],id="update-load",style={'margin': '0 0 0 100px','float': 'left'})
     html.Div(
         [
-            html.Div([html.Img(src='../assets/Banco_de_Chile_Logo.png',
-                               style={'height': '24px', 'width': '144px'}),
+            html.Div(
                       html.Div([html.P('Fuente: Superintendencia de Pensiones')],
                                className='Fuente'),
                       html.P('Este archivo es confidencial y destinado únicamente para uso interno.', style={'textAlign': 'right', 'fontStyle': 'italic'
