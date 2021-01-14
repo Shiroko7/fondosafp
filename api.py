@@ -879,147 +879,20 @@ def upload_to_sql_monthly(start_date, end_date=None):
     df_activos = activos(start_date, end_date).dropna()
     df_extranjeros = extranjeros(start_date, end_date).dropna()
 
-    if not df_activos.empty:
-        df_activos.to_sql("activos",
-                          database,
-                          if_exists='append',
-                          schema='public',
-                          index=False,
-                          chunksize=500,
-                          dtype={"Fecha": DateTime,
-                                 "Nombre": Text,
-                                 "Porcentaje_A": Float,
-                                 "Porcentaje_B": Float,
-                                 "Porcentaje_C": Float,
-                                 "Porcentaje_D": Float,
-                                 "Porcentaje_E": Float,
-                                 "Porcentaje_TOTAL": Float,
-                                 "MM_TOTAL": Float,
-                                 "MMUSD_TOTAL": Float}
-                          )
-    else:
-        print("Error inesparado: activos")
-    # IMPORTANTE: CADA UPLOAD DE UN DÍA PRIMERO BOTA LO QUE YA ESTA, PARA NO DUPLICAR DATA ACCIDENTALMENTE
-    for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
-        monthly_delete_by_date(last_day_of_month(fecha))
+    # fix absences
 
-    if not df_fn.empty:
-        df_fn.to_sql("forwards_nacionales",
-                     database,
-                     if_exists='append',
-                     schema='public',
-                     index=False,
-                     chunksize=500,
-                     dtype={"Fecha": DateTime,
-                            "Nombre": Text,
-                            "Fondo_A": Float,
-                            "Fondo_B": Float,
-                            "Fondo_C": Float,
-                            "Fondo_D": Float,
-                            "Fondo_E": Float,
-                            "TOTAL": Float}
-                     )
-    else:
-        print("Error inesparado: forwards nacionales")
+    df_fn.replace("-", 0, True)
 
-    if not df_total_activos.empty:
-        df_total_activos.to_sql("inversion_total",
-                                database,
-                                if_exists='append',
-                                schema='public',
-                                index=False,
-                                chunksize=500,
-                                dtype={"Fecha": DateTime,
-                                       "Nombre": Text,
-                                       "MMUSD_A": Float,
-                                       "Porcentaje_A": Float,
-                                       "MMUSD_B": Float,
-                                       "Porcentaje_B": Float,
-                                       "MMUSD_C": Float,
-                                       "Porcentaje_C": Float,
-                                       "MMUSD_D": Float,
-                                       "Porcentaje_D": Float,
-                                       "MMUSD_E": Float,
-                                       "Porcentaje_E": Float,
-                                       "MMUSD_TOTAL": Float,
-                                       "Porcentaje_TOTAL": Float}
-                                )
-    else:
-        print("Error inesparado: inversión total")
+    df_total_activos.replace("-", 0, True)
+    df_nacional.replace("-", 0, True)
+    df_internacional.replace("-", 0, True)
 
-    if not df_nacional.empty:
-        df_nacional.to_sql("inversion_nacional",
-                           database,
-                           if_exists='append',
-                           schema='public',
-                           index=False,
-                           chunksize=500,
-                           dtype={"Fecha": DateTime,
-                                  "Nombre": Text,
-                                  "MMUSD_A": Float,
-                                  "Porcentaje_A": Float,
-                                  "MMUSD_B": Float,
-                                  "Porcentaje_B": Float,
-                                  "MMUSD_C": Float,
-                                  "Porcentaje_C": Float,
-                                  "MMUSD_D": Float,
-                                  "Porcentaje_D": Float,
-                                  "MMUSD_E": Float,
-                                  "Porcentaje_E": Float,
-                                  "MMUSD_TOTAL": Float,
-                                  "Porcentaje_TOTAL": Float}
-                           )
-    else:
-        print("Error inesparado: inversión nacional")
+    df_activos.replace("-", 0, True)
+    df_extranjeros.replace("-", 0, True)
 
-    if not df_internacional.empty:
-        df_internacional.to_sql("inversion_internacional",
-                                database,
-                                if_exists='append',
-                                schema='public',
-                                index=False,
-                                chunksize=500,
-                                dtype={"Fecha": DateTime,
-                                       "Nombre": Text,
-                                       "MMUSD_A": Float,
-                                       "Porcentaje_A": Float,
-                                       "MMUSD_B": Float,
-                                       "Porcentaje_B": Float,
-                                       "MMUSD_C": Float,
-                                       "Porcentaje_C": Float,
-                                       "MMUSD_D": Float,
-                                       "Porcentaje_D": Float,
-                                       "MMUSD_E": Float,
-                                       "Porcentaje_E": Float,
-                                       "MMUSD_TOTAL": Float,
-                                       "Porcentaje_TOTAL": Float}
-                                )
-    else:
-        print("Error inesparado: inversión internacional")
-
-    if not df_activos.empty:
-        df_activos.to_sql("activos",
-                          database,
-                          if_exists='append',
-                          schema='public',
-                          index=False,
-                          chunksize=500,
-                          dtype={"Fecha": DateTime,
-                                 "Nombre": Text,
-                                 "Porcentaje_A": Float,
-                                 "Porcentaje_B": Float,
-                                 "Porcentaje_C": Float,
-                                 "Porcentaje_D": Float,
-                                 "Porcentaje_E": Float,
-                                 "Porcentaje_TOTAL": Float,
-                                 "MM_TOTAL": Float,
-                                 "MMUSD_TOTAL": Float}
-                          )
-    else:
-        print("Error inesparado: activos")
-
-    if not df_extranjeros.empty:
-        df_extranjeros.to_sql("extranjeros",
+    try:
+        if not df_activos.empty:
+            df_activos.to_sql("activos",
                               database,
                               if_exists='append',
                               schema='public',
@@ -1027,18 +900,185 @@ def upload_to_sql_monthly(start_date, end_date=None):
                               chunksize=500,
                               dtype={"Fecha": DateTime,
                                      "Nombre": Text,
-                                     "ASIA_EMERGENTE": Float,
-                                     "ASIA_PACIFICO": Float,
-                                     "EUROPA": Float,
-                                     "EUROPA_EMERGENTE": Float,
-                                     "LATINOAMERICA": Float,
-                                     "MEDIO_ORIENTE_AFRICA": Float,
-                                     "NORTEAMERICA": Float,
-                                     "OTROS": Float,
+                                     "Porcentaje_A": Float,
+                                     "Porcentaje_B": Float,
+                                     "Porcentaje_C": Float,
+                                     "Porcentaje_D": Float,
+                                     "Porcentaje_E": Float,
+                                     "Porcentaje_TOTAL": Float,
+                                     "MM_TOTAL": Float,
                                      "MMUSD_TOTAL": Float}
                               )
-    else:
-        print("Error inesparado: extranjeros")
+        else:
+            print("Dataframe vacío: activos")
+    except:
+        print(df_activos)
+        print("Error inesperado: activos")
+
+    # IMPORTANTE: CADA UPLOAD DE UN DÍA PRIMERO BOTA LO QUE YA ESTA, PARA NO DUPLICAR DATA ACCIDENTALMENTE
+    for fecha in rrule(MONTHLY, dtstart=start_date, until=end_date):
+        monthly_delete_by_date(last_day_of_month(fecha))
+
+    try:
+        if not df_fn.empty:
+            df_fn.to_sql("forwards_nacionales",
+                         database,
+                         if_exists='append',
+                         schema='public',
+                         index=False,
+                         chunksize=500,
+                         dtype={"Fecha": DateTime,
+                                "Nombre": Text,
+                                "Fondo_A": Float,
+                                "Fondo_B": Float,
+                                "Fondo_C": Float,
+                                "Fondo_D": Float,
+                                "Fondo_E": Float,
+                                "TOTAL": Float}
+                         )
+        else:
+            print("Dataframe vacío: forwards nacionales")
+    except:
+        print(df_fn)
+        print("Error inesperado: forwards nacionales")
+
+    try:
+        if not df_total_activos.empty:
+            df_total_activos.to_sql("inversion_total",
+                                    database,
+                                    if_exists='append',
+                                    schema='public',
+                                    index=False,
+                                    chunksize=500,
+                                    dtype={"Fecha": DateTime,
+                                           "Nombre": Text,
+                                           "MMUSD_A": Float,
+                                           "Porcentaje_A": Float,
+                                           "MMUSD_B": Float,
+                                           "Porcentaje_B": Float,
+                                           "MMUSD_C": Float,
+                                           "Porcentaje_C": Float,
+                                           "MMUSD_D": Float,
+                                           "Porcentaje_D": Float,
+                                           "MMUSD_E": Float,
+                                           "Porcentaje_E": Float,
+                                           "MMUSD_TOTAL": Float,
+                                           "Porcentaje_TOTAL": Float}
+                                    )
+        else:
+            print("Dataframe vacío: inversión total")
+    except:
+        print(df_total_activos)
+        print("Error inesperado: inversión total")
+
+    try:
+        if not df_nacional.empty:
+            df_nacional.to_sql("inversion_nacional",
+                               database,
+                               if_exists='append',
+                               schema='public',
+                               index=False,
+                               chunksize=500,
+                               dtype={"Fecha": DateTime,
+                                      "Nombre": Text,
+                                      "MMUSD_A": Float,
+                                      "Porcentaje_A": Float,
+                                      "MMUSD_B": Float,
+                                      "Porcentaje_B": Float,
+                                      "MMUSD_C": Float,
+                                      "Porcentaje_C": Float,
+                                      "MMUSD_D": Float,
+                                      "Porcentaje_D": Float,
+                                      "MMUSD_E": Float,
+                                      "Porcentaje_E": Float,
+                                      "MMUSD_TOTAL": Float,
+                                      "Porcentaje_TOTAL": Float}
+                               )
+        else:
+            print("Dataframe vacío: inversión nacional")
+    except:
+        print(df_nacional)
+        print("Error inesperado: inversión nacional")
+
+    try:
+        if not df_internacional.empty:
+            df_internacional.to_sql("inversion_internacional",
+                                    database,
+                                    if_exists='append',
+                                    schema='public',
+                                    index=False,
+                                    chunksize=500,
+                                    dtype={"Fecha": DateTime,
+                                           "Nombre": Text,
+                                           "MMUSD_A": Float,
+                                           "Porcentaje_A": Float,
+                                           "MMUSD_B": Float,
+                                           "Porcentaje_B": Float,
+                                           "MMUSD_C": Float,
+                                           "Porcentaje_C": Float,
+                                           "MMUSD_D": Float,
+                                           "Porcentaje_D": Float,
+                                           "MMUSD_E": Float,
+                                           "Porcentaje_E": Float,
+                                           "MMUSD_TOTAL": Float,
+                                           "Porcentaje_TOTAL": Float}
+                                    )
+        else:
+            print("Dataframe vacío: inversión internacional")
+    except:
+        print(df_internacional)
+        print("Error inesperado: inversión internacional")
+
+    try:
+        if not df_activos.empty:
+            df_activos.to_sql("activos",
+                              database,
+                              if_exists='append',
+                              schema='public',
+                              index=False,
+                              chunksize=500,
+                              dtype={"Fecha": DateTime,
+                                     "Nombre": Text,
+                                     "Porcentaje_A": Float,
+                                     "Porcentaje_B": Float,
+                                     "Porcentaje_C": Float,
+                                     "Porcentaje_D": Float,
+                                     "Porcentaje_E": Float,
+                                     "Porcentaje_TOTAL": Float,
+                                     "MM_TOTAL": Float,
+                                     "MMUSD_TOTAL": Float}
+                              )
+        else:
+            print("Dataframe vacío: activos")
+    except:
+        print(df_activos)
+        print("Error inesperado: activos")
+
+    try:
+        if not df_extranjeros.empty:
+            df_extranjeros.to_sql("extranjeros",
+                                  database,
+                                  if_exists='append',
+                                  schema='public',
+                                  index=False,
+                                  chunksize=500,
+                                  dtype={"Fecha": DateTime,
+                                         "Nombre": Text,
+                                         "ASIA_EMERGENTE": Float,
+                                         "ASIA_PACIFICO": Float,
+                                         "EUROPA": Float,
+                                         "EUROPA_EMERGENTE": Float,
+                                         "LATINOAMERICA": Float,
+                                         "MEDIO_ORIENTE_AFRICA": Float,
+                                         "NORTEAMERICA": Float,
+                                         "OTROS": Float,
+                                         "MMUSD_TOTAL": Float}
+                                  )
+        else:
+            print("Dataframe vacío: extranjeros")
+    except:
+        print(df_extranjeros)
+        print("Error inesperado: extranjeros")
 
     session.commit()
 
